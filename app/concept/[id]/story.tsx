@@ -20,13 +20,27 @@ export default function StoryScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.storyHeader}>
-        <Text style={styles.field}>{concept.field}</Text>
-        <Text style={styles.level}>{concept.level}</Text>
+        <View style={styles.fieldBadge}>
+          <Text style={styles.fieldText}>{concept.field}</Text>
+        </View>
+        <View style={styles.levelBadge}>
+          <Text style={styles.levelText}>{concept.level}</Text>
+        </View>
       </View>
+
+      <View style={styles.quoteDecor}>
+        <Text style={styles.quoteChar}>"</Text>
+      </View>
+
       <Text style={styles.storyTitle}>{concept.storyTitle}</Text>
+
       <View style={styles.divider} />
+
       <Text style={styles.fable}>{concept.fable}</Text>
+
       <View style={styles.revealSection}>
+        <View style={styles.revealDivider} />
+        <Text style={styles.revealEmoji}>🔍</Text>
         <Text style={styles.hint}>准备好了解这个概念了吗？</Text>
         <PrimaryButton
           title="揭示概念"
@@ -44,55 +58,65 @@ const styles = StyleSheet.create({
   storyHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 16,
   },
-  field: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#E17055",
-    backgroundColor: "#FDECEA",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-    overflow: "hidden",
+  fieldBadge: {
+    backgroundColor: "#E17055",
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 8,
     marginRight: 8,
   },
-  level: {
-    fontSize: 13,
-    color: "#636E72",
-    backgroundColor: "#F0F0F0",
+  fieldText: { fontSize: 13, fontWeight: "600", color: "#FFF" },
+  levelBadge: {
+    backgroundColor: "#F5F6FA",
     paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-    overflow: "hidden",
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+  levelText: { fontSize: 13, color: "#636E72", fontWeight: "500" },
+  quoteDecor: {
+    marginBottom: 4,
+  },
+  quoteChar: {
+    fontSize: 48,
+    color: "#E17055",
+    fontWeight: "800",
+    lineHeight: 52,
+    opacity: 0.3,
   },
   storyTitle: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "800",
     color: "#2D3436",
     marginBottom: 16,
-    lineHeight: 32,
+    lineHeight: 36,
   },
   divider: {
-    height: 2,
+    height: 3,
     backgroundColor: "#E17055",
-    width: 40,
-    marginBottom: 20,
-    borderRadius: 1,
+    width: 36,
+    marginBottom: 24,
+    borderRadius: 2,
   },
   fable: {
-    fontSize: 17,
+    fontSize: 18,
     color: "#2D3436",
-    lineHeight: 30,
+    lineHeight: 34,
     textAlign: "justify",
   },
   revealSection: {
-    marginTop: 32,
+    marginTop: 36,
     alignItems: "center",
-    paddingTop: 20,
-    borderTopWidth: 1,
-    borderTopColor: "#E8E8E8",
+    paddingTop: 24,
   },
+  revealDivider: {
+    width: 60,
+    height: 1,
+    backgroundColor: "#DDD",
+    marginBottom: 20,
+  },
+  revealEmoji: { fontSize: 28, marginBottom: 10 },
   hint: {
     fontSize: 15,
     color: "#636E72",

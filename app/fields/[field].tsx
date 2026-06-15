@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { concepts } from "../../src/data/concepts";
 import ConceptCard from "../../src/components/ConceptCard";
 import { initDatabase, getLearningRecords, getFavorites } from "../../src/lib/db";
+import { getFieldColor, getFieldIcon } from "../../src/utils/concept";
 
 export default function FieldList() {
   const { field } = useLocalSearchParams<{ field: string }>();
@@ -12,6 +13,8 @@ export default function FieldList() {
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
   const fieldConcepts = concepts.filter((c) => c.field === field);
+  const fieldColor = getFieldColor(field || "");
+  const fieldIcon = getFieldIcon(field || "");
 
   useEffect(() => {
     initDatabase();
@@ -23,9 +26,14 @@ export default function FieldList() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.fieldName}>{field}</Text>
-        <Text style={styles.count}>{fieldConcepts.length} 个概念</Text>
+      <View style={[styles.header, { backgroundColor: fieldColor + "10" }]}>
+        <View style={[styles.iconBg, { backgroundColor: fieldColor + "20" }]}>
+          <Text style={styles.icon}>{fieldIcon}</Text>
+        </View>
+        <View style={styles.headerInfo}>
+          <Text style={[styles.fieldName, { color: fieldColor }]}>{field}</Text>
+          <Text style={styles.count}>{fieldConcepts.length} 个概念</Text>
+        </View>
       </View>
       <FlatList
         data={fieldConcepts}
@@ -47,10 +55,22 @@ export default function FieldList() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFF8F0" },
   header: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 20,
-    paddingBottom: 8,
+    paddingBottom: 16,
   },
-  fieldName: { fontSize: 22, fontWeight: "800", color: "#2D3436" },
-  count: { fontSize: 13, color: "#636E72", marginTop: 4 },
+  iconBg: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 14,
+  },
+  icon: { fontSize: 26 },
+  headerInfo: { flex: 1 },
+  fieldName: { fontSize: 22, fontWeight: "800" },
+  count: { fontSize: 13, color: "#B2BEC3", marginTop: 2 },
   list: { padding: 20, paddingTop: 8 },
 });

@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { initDatabase, getWrongAnswers } from "../src/lib/db";
 import { concepts } from "../src/data/concepts";
+import { getFieldColor } from "../src/utils/concept";
 import type { WrongAnswer } from "../src/types/concept";
 
 export default function WrongAnswersScreen() {
@@ -18,7 +19,9 @@ export default function WrongAnswersScreen() {
   if (wrongs.length === 0) {
     return (
       <View style={styles.empty}>
-        <Text style={styles.emptyIcon}>📝</Text>
+        <View style={styles.emptyIconBg}>
+          <Text style={styles.emptyIcon}>📝</Text>
+        </View>
         <Text style={styles.emptyText}>还没有错题</Text>
         <Text style={styles.emptyHint}>做测验时答错的题会出现在这里</Text>
       </View>
@@ -33,25 +36,31 @@ export default function WrongAnswersScreen() {
         contentContainerStyle={styles.list}
         renderItem={({ item }) => {
           const concept = concepts.find((c) => c.id === item.concept_id);
+          const fieldColor = concept ? getFieldColor(concept.field) : "#636E72";
           return (
             <View style={styles.card}>
               <View style={styles.cardHeader}>
                 <Text style={styles.conceptTag}>
                   {concept?.conceptName || item.concept_id}
                 </Text>
-                <Text style={styles.fieldTag}>{concept?.field}</Text>
+                <View style={[styles.fieldTag, { backgroundColor: fieldColor + "15" }]}>
+                  <Text style={[styles.fieldText, { color: fieldColor }]}>{concept?.field}</Text>
+                </View>
               </View>
               <Text style={styles.question}>{item.question}</Text>
-              <View style={styles.answerRow}>
-                <Text style={styles.label}>你的答案：</Text>
-                <Text style={styles.wrongAnswer}>{item.user_answer}</Text>
-              </View>
-              <View style={styles.answerRow}>
-                <Text style={styles.label}>正确答案：</Text>
-                <Text style={styles.correctAnswer}>{item.correct_answer}</Text>
+              <View style={styles.answerBox}>
+                <View style={styles.answerRow}>
+                  <Text style={styles.answerLabel}>你的答案</Text>
+                  <Text style={styles.wrongAnswer}>{item.user_answer}</Text>
+                </View>
+                <View style={styles.answerDivider} />
+                <View style={styles.answerRow}>
+                  <Text style={styles.answerLabel}>正确答案</Text>
+                  <Text style={styles.correctAnswer}>{item.correct_answer}</Text>
+                </View>
               </View>
               <View style={styles.explanationBox}>
-                <Text style={styles.explanationLabel}>解析：</Text>
+                <Text style={styles.explanationLabel}>💡 解析</Text>
                 <Text style={styles.explanation}>{item.explanation}</Text>
               </View>
             </View>
@@ -67,13 +76,13 @@ const styles = StyleSheet.create({
   list: { padding: 20 },
   card: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 12,
+    borderRadius: 14,
     padding: 16,
     marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
+    shadowColor: "#2D3436",
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
-    shadowRadius: 4,
+    shadowRadius: 6,
     elevation: 2,
   },
   cardHeader: {
@@ -82,16 +91,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
-  conceptTag: { fontSize: 14, fontWeight: "700", color: "#2D3436" },
+  conceptTag: { fontSize: 14, fontWeight: "700", color: "#2D3436", flex: 1 },
   fieldTag: {
-    fontSize: 11,
-    color: "#E17055",
-    backgroundColor: "#FDECEA",
     paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-    overflow: "hidden",
+    paddingVertical: 3,
+    borderRadius: 6,
+    marginLeft: 8,
   },
+  fieldText: { fontSize: 12, fontWeight: "600" },
   question: {
     fontSize: 15,
     fontWeight: "600",
@@ -99,31 +106,40 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     lineHeight: 22,
   },
+  answerBox: {
+    backgroundColor: "#F8F9FA",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 10,
+  },
   answerRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 6,
   },
-  label: { fontSize: 13, color: "#636E72", marginRight: 4 },
+  answerDivider: {
+    height: 1,
+    backgroundColor: "#E8E8E8",
+    marginVertical: 8,
+  },
+  answerLabel: { fontSize: 12, color: "#B2BEC3", width: 60 },
   wrongAnswer: {
-    fontSize: 13,
+    fontSize: 14,
     color: "#E17055",
     fontWeight: "600",
     flex: 1,
   },
   correctAnswer: {
-    fontSize: 13,
+    fontSize: 14,
     color: "#00B894",
     fontWeight: "600",
     flex: 1,
   },
   explanationBox: {
-    marginTop: 10,
-    backgroundColor: "#F8F9FA",
-    borderRadius: 8,
+    backgroundColor: "#FFF8F0",
+    borderRadius: 10,
     padding: 12,
   },
-  explanationLabel: { fontSize: 13, fontWeight: "600", color: "#636E72", marginBottom: 4 },
+  explanationLabel: { fontSize: 13, fontWeight: "600", color: "#636E72", marginBottom: 6 },
   explanation: { fontSize: 13, color: "#636E72", lineHeight: 20 },
   empty: {
     flex: 1,
@@ -132,7 +148,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF8F0",
     padding: 40,
   },
-  emptyIcon: { fontSize: 48, marginBottom: 16 },
-  emptyText: { fontSize: 18, fontWeight: "600", color: "#2D3436", marginBottom: 8 },
-  emptyHint: { fontSize: 14, color: "#636E72", textAlign: "center" },
+  emptyIconBg: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: "#FDCB6E" + "20",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  emptyIcon: { fontSize: 32 },
+  emptyText: { fontSize: 18, fontWeight: "700", color: "#2D3436", marginBottom: 8 },
+  emptyHint: { fontSize: 14, color: "#B2BEC3", textAlign: "center" },
 });

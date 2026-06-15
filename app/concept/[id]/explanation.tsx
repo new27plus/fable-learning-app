@@ -37,65 +37,84 @@ export default function ExplanationScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.topBar}>
-        <View style={[styles.badge, { backgroundColor: fieldColor }]}>
-          <Text style={styles.badgeText}>{concept.field}</Text>
+      {/* Header */}
+      <View style={[styles.headerCard, { backgroundColor: fieldColor + "10" }]}>
+        <View style={styles.topBar}>
+          <View style={[styles.badge, { backgroundColor: fieldColor }]}>
+            <Text style={styles.badgeText}>{concept.field}</Text>
+          </View>
+          <View style={styles.levelBadge}>
+            <Text style={styles.levelText}>{concept.level}</Text>
+          </View>
         </View>
-        <Text style={styles.level}>{concept.level}</Text>
+        <Text style={[styles.conceptName, { color: fieldColor }]}>{concept.conceptName}</Text>
       </View>
 
-      <Text style={styles.conceptName}>{concept.conceptName}</Text>
-
-      <View style={styles.section}>
+      {/* Sections */}
+      <View style={styles.sectionCard}>
+        <View style={[styles.sectionAccent, { backgroundColor: "#0984E3" }]} />
         <Text style={styles.sectionTitle}>💡 大白话解释</Text>
         <Text style={styles.bodyText}>{concept.plainExplanation}</Text>
       </View>
 
-      <View style={styles.section}>
+      <View style={styles.sectionCard}>
+        <View style={[styles.sectionAccent, { backgroundColor: "#6C5CE7" }]} />
         <Text style={styles.sectionTitle}>📘 正式定义</Text>
         <Text style={styles.bodyText}>{concept.formalDefinition}</Text>
       </View>
 
-      <View style={styles.section}>
+      <View style={styles.sectionCard}>
+        <View style={[styles.sectionAccent, { backgroundColor: "#FDCB6E" }]} />
         <Text style={styles.sectionTitle}>⭐ 为什么重要</Text>
         <Text style={styles.bodyText}>{concept.importance}</Text>
       </View>
 
-      <View style={styles.section}>
+      <View style={styles.sectionCard}>
+        <View style={[styles.sectionAccent, { backgroundColor: "#E17055" }]} />
         <Text style={styles.sectionTitle}>🔗 隐喻对应表</Text>
         <MetaphorTable data={concept.metaphorMap} />
       </View>
 
-      <View style={styles.section}>
+      <View style={styles.sectionCard}>
+        <View style={[styles.sectionAccent, { backgroundColor: "#FDCB6E" }]} />
         <Text style={styles.sectionTitle}>⚠️ 类比边界</Text>
         {concept.boundaries.map((b, i) => (
           <View key={i} style={styles.bulletRow}>
-            <Text style={styles.bullet}>•</Text>
+            <View style={styles.bulletDot} />
             <Text style={styles.bulletText}>{b}</Text>
           </View>
         ))}
       </View>
 
-      <View style={styles.section}>
+      <View style={styles.sectionCard}>
+        <View style={[styles.sectionAccent, { backgroundColor: "#00B894" }]} />
         <Text style={styles.sectionTitle}>📌 现实例子</Text>
         {concept.examples.map((ex, i) => (
           <View key={i} style={styles.exampleCard}>
             <View style={styles.exampleHeader}>
               <Text style={styles.exampleTitle}>{ex.title}</Text>
-              <Text
+              <View
                 style={[
-                  styles.exampleType,
-                  ex.type === "positive" ? styles.positive : styles.negative,
+                  styles.exampleTag,
+                  ex.type === "positive" ? styles.positiveTag : styles.negativeTag,
                 ]}
               >
-                {ex.type === "positive" ? "正面" : "反面"}
-              </Text>
+                <Text
+                  style={[
+                    styles.exampleTagText,
+                    ex.type === "positive" ? styles.positiveText : styles.negativeText,
+                  ]}
+                >
+                  {ex.type === "positive" ? "正面" : "反面"}
+                </Text>
+              </View>
             </View>
             <Text style={styles.exampleContent}>{ex.content}</Text>
           </View>
         ))}
       </View>
 
+      {/* Actions */}
       <View style={styles.actions}>
         <PrimaryButton
           title={fav ? "❤️ 已收藏" : "🤍 收藏此概念"}
@@ -113,62 +132,96 @@ export default function ExplanationScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFF8F0" },
-  content: { padding: 20, paddingBottom: 40 },
+  content: { padding: 16, paddingBottom: 40 },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
+
+  // Header card
+  headerCard: {
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+  },
   topBar: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 12,
   },
   badge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 8,
     marginRight: 8,
   },
   badgeText: { color: "#FFF", fontSize: 13, fontWeight: "600" },
-  level: {
-    fontSize: 13,
-    color: "#636E72",
-    backgroundColor: "#F0F0F0",
+  levelBadge: {
+    backgroundColor: "rgba(255,255,255,0.6)",
     paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+  levelText: { fontSize: 13, color: "#636E72", fontWeight: "500" },
+  conceptName: {
+    fontSize: 28,
+    fontWeight: "800",
+    lineHeight: 38,
+  },
+
+  // Section cards
+  sectionCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 18,
+    marginBottom: 12,
+    shadowColor: "#2D3436",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
     overflow: "hidden",
   },
-  conceptName: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: "#2D3436",
-    marginBottom: 24,
-    lineHeight: 34,
+  sectionAccent: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 4,
+    borderTopLeftRadius: 14,
+    borderBottomLeftRadius: 14,
   },
-  section: { marginBottom: 24 },
   sectionTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: "700",
     color: "#2D3436",
-    marginBottom: 10,
+    marginBottom: 12,
   },
   bodyText: {
     fontSize: 15,
     color: "#2D3436",
     lineHeight: 26,
   },
+
+  // Bullets
   bulletRow: {
     flexDirection: "row",
-    marginBottom: 8,
+    marginBottom: 10,
     paddingLeft: 4,
   },
-  bullet: { color: "#E17055", marginRight: 8, fontSize: 15 },
+  bulletDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#E17055",
+    marginTop: 8,
+    marginRight: 10,
+  },
   bulletText: { flex: 1, fontSize: 15, color: "#2D3436", lineHeight: 22 },
+
+  // Examples
   exampleCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#F8F9FA",
     borderRadius: 10,
     padding: 14,
     marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#E8E8E8",
   },
   exampleHeader: {
     flexDirection: "row",
@@ -177,16 +230,18 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   exampleTitle: { fontSize: 15, fontWeight: "600", color: "#2D3436" },
-  exampleType: {
-    fontSize: 12,
-    fontWeight: "600",
+  exampleTag: {
     paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-    overflow: "hidden",
+    paddingVertical: 3,
+    borderRadius: 6,
   },
-  positive: { backgroundColor: "#D5F5E3", color: "#00B894" },
-  negative: { backgroundColor: "#FADBD8", color: "#E17055" },
+  positiveTag: { backgroundColor: "#D5F5E3" },
+  negativeTag: { backgroundColor: "#FADBD8" },
+  exampleTagText: { fontSize: 12, fontWeight: "600" },
+  positiveText: { color: "#00B894" },
+  negativeText: { color: "#E17055" },
   exampleContent: { fontSize: 14, color: "#636E72", lineHeight: 22 },
-  actions: { marginTop: 10, gap: 8 },
+
+  // Actions
+  actions: { marginTop: 8, gap: 8 },
 });

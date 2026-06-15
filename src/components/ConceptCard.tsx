@@ -19,21 +19,25 @@ export default function ConceptCard({ concept, isLearned, isFavorite, onPress }:
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.header}>
-        <View style={[styles.badge, { backgroundColor: fieldColor }]}>
-          <Text style={styles.badgeText}>{concept.field}</Text>
+      <View style={[styles.accent, { backgroundColor: fieldColor }]} />
+      <View style={styles.body}>
+        <View style={styles.header}>
+          <View style={[styles.badge, { backgroundColor: fieldColor }]}>
+            <Text style={styles.badgeText}>{concept.field}</Text>
+          </View>
+          <View style={[styles.levelBadge, { borderColor: fieldColor + "60" }]}>
+            <Text style={[styles.levelText, { color: fieldColor }]}>{concept.level}</Text>
+          </View>
+          <View style={styles.statusDots}>
+            {isLearned && <View style={[styles.dot, { backgroundColor: "#00B894" }]} />}
+            {isFavorite && <View style={[styles.dot, { backgroundColor: "#E17055" }]} />}
+          </View>
         </View>
-        <View style={[styles.levelBadge, { borderColor: fieldColor }]}>
-          <Text style={[styles.levelText, { color: fieldColor }]}>{concept.level}</Text>
+        <Text style={styles.title}>{concept.storyTitle}</Text>
+        <View style={styles.footer}>
+          <Text style={styles.hint}>点击阅读</Text>
+          <Text style={styles.arrow}>›</Text>
         </View>
-      </View>
-      <Text style={styles.title}>{concept.storyTitle}</Text>
-      <View style={styles.footer}>
-        <View style={styles.statusRow}>
-          {isLearned && <Text style={styles.statusTag}>✅ 已学习</Text>}
-          {isFavorite && <Text style={styles.statusTag}>❤️ 已收藏</Text>}
-        </View>
-        <Text style={styles.hint}>点击阅读 →</Text>
       </View>
     </TouchableOpacity>
   );
@@ -41,15 +45,23 @@ export default function ConceptCard({ concept, isLearned, isFavorite, onPress }:
 
 const styles = StyleSheet.create({
   card: {
+    flexDirection: "row",
     backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 14,
     marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowColor: "#2D3436",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 3,
+    elevation: 4,
+    overflow: "hidden",
+  },
+  accent: {
+    width: 5,
+  },
+  body: {
+    flex: 1,
+    padding: 16,
   },
   header: {
     flexDirection: "row",
@@ -57,9 +69,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   badge: {
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     paddingVertical: 3,
-    borderRadius: 6,
+    borderRadius: 8,
     marginRight: 8,
   },
   badgeText: {
@@ -70,35 +82,43 @@ const styles = StyleSheet.create({
   levelBadge: {
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 6,
+    borderRadius: 8,
     borderWidth: 1,
   },
   levelText: {
     fontSize: 12,
     fontWeight: "500",
   },
+  statusDots: {
+    flexDirection: "row",
+    marginLeft: "auto",
+    gap: 5,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
   title: {
     fontSize: 17,
     fontWeight: "600",
     color: "#2D3436",
-    marginBottom: 8,
+    marginBottom: 10,
     lineHeight: 24,
   },
   footer: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-  },
-  statusRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  statusTag: {
-    fontSize: 12,
-    color: "#636E72",
+    justifyContent: "flex-end",
   },
   hint: {
     fontSize: 12,
     color: "#B2BEC3",
+    marginRight: 4,
+  },
+  arrow: {
+    fontSize: 18,
+    color: "#B2BEC3",
+    fontWeight: "300",
   },
 });

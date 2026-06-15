@@ -22,7 +22,9 @@ export default function FavoritesScreen() {
   if (favoriteConcepts.length === 0) {
     return (
       <View style={styles.empty}>
-        <Text style={styles.emptyIcon}>❤️</Text>
+        <View style={styles.emptyIconBg}>
+          <Text style={styles.emptyIcon}>❤️</Text>
+        </View>
         <Text style={styles.emptyText}>还没有收藏任何概念</Text>
         <Text style={styles.emptyHint}>在概念解释页点击收藏按钮即可</Text>
       </View>
@@ -58,7 +60,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF8F0",
     padding: 40,
   },
-  emptyIcon: { fontSize: 48, marginBottom: 16 },
-  emptyText: { fontSize: 18, fontWeight: "600", color: "#2D3436", marginBottom: 8 },
-  emptyHint: { fontSize: 14, color: "#636E72", textAlign: "center" },
+  emptyIconBg: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: "#E17055" + "15",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  emptyIcon: { fontSize: 32 },
+  emptyText: { fontSize: 18, fontWeight: "700", color: "#2D3436", marginBottom: 8 },
+  emptyHint: { fontSize: 14, color: "#B2BEC3", textAlign: "center" },
 });

@@ -25,9 +25,9 @@ export default function MetaphorTable({ data }: Props) {
           style={[styles.row, index % 2 === 0 ? styles.evenRow : styles.oddRow]}
         >
           <Text style={[styles.cell, styles.col1]}>{item.fableElement}</Text>
-          <Text style={[styles.cell, styles.col2, styles.theoryCell]}>
-            {item.theoryElement}
-          </Text>
+          <View style={[styles.col2]}>
+            <Text style={styles.theoryCell}>{item.theoryElement}</Text>
+          </View>
           <Text style={[styles.cell, styles.col3]}>{item.reason}</Text>
         </View>
       ))}
@@ -37,16 +37,17 @@ export default function MetaphorTable({ data }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 8,
+    borderRadius: 12,
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "#E8E8E8",
+    backgroundColor: "#FFFFFF",
   },
   headerRow: {
     flexDirection: "row",
     backgroundColor: "#E17055",
     paddingVertical: 10,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
   },
   headerCell: {
     fontSize: 13,
@@ -55,11 +56,11 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
   },
   evenRow: {
-    backgroundColor: "#FFF",
+    backgroundColor: "#FFFFFF",
   },
   oddRow: {
     backgroundColor: "#FFF8F0",
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
   cell: {
     fontSize: 13,
     color: "#2D3436",
-    lineHeight: 18,
+    lineHeight: 19,
   },
   col1: {
     flex: 2,
@@ -79,7 +80,9 @@ const styles = StyleSheet.create({
     flex: 3,
   },
   theoryCell: {
+    fontSize: 13,
     fontWeight: "600",
     color: "#E17055",
+    lineHeight: 19,
   },
 });

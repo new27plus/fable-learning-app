@@ -14,18 +14,22 @@ interface Props {
 
 export default function QuizOption({ label, index, selected, correct, disabled, onPress }: Props) {
   let containerStyle: object[] = [styles.container];
-  let labelStyle: object[] = [styles.optionLabel];
-  let prefixStyle: object[] = [styles.prefix];
+  let prefixBg: object[] = [styles.prefixCircle];
+  let prefixTextStyle: object[] = [styles.prefixText];
+  let labelTextStyle: object[] = [styles.label];
 
   if (correct === true) {
     containerStyle = [...containerStyle, styles.correctContainer];
-    prefixStyle = [...prefixStyle, styles.correctPrefix];
+    prefixBg = [...prefixBg, styles.correctPrefixBg];
+    prefixTextStyle = [...prefixTextStyle, styles.correctPrefixText];
   } else if (correct === false && selected) {
     containerStyle = [...containerStyle, styles.wrongContainer];
-    prefixStyle = [...prefixStyle, styles.wrongPrefix];
+    prefixBg = [...prefixBg, styles.wrongPrefixBg];
+    prefixTextStyle = [...prefixTextStyle, styles.wrongPrefixText];
   } else if (selected) {
     containerStyle = [...containerStyle, styles.selectedContainer];
-    prefixStyle = [...prefixStyle, styles.selectedPrefix];
+    prefixBg = [...prefixBg, styles.selectedPrefixBg];
+    prefixTextStyle = [...prefixTextStyle, styles.selectedPrefixText];
   }
 
   return (
@@ -35,12 +39,12 @@ export default function QuizOption({ label, index, selected, correct, disabled, 
       disabled={disabled}
       activeOpacity={0.7}
     >
-      <View style={styles.prefixContainer}>
-        <Text style={prefixStyle}>{LABELS[index]}</Text>
+      <View style={prefixBg}>
+        <Text style={prefixTextStyle}>{LABELS[index]}</Text>
       </View>
-      <Text style={labelStyle}>{label}</Text>
-      {correct === true && <Text style={styles.icon}>✓</Text>}
-      {correct === false && selected && <Text style={[styles.icon, styles.wrongIcon]}>✗</Text>}
+      <Text style={labelTextStyle}>{label}</Text>
+      {correct === true && <Text style={styles.checkIcon}>✓</Text>}
+      {correct === false && selected && <Text style={styles.crossIcon}>✗</Text>}
     </TouchableOpacity>
   );
 }
@@ -50,62 +54,72 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
-    borderRadius: 10,
+    borderRadius: 12,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1.5,
-    borderColor: "#DFE6E9",
+    borderColor: "#E8E8E8",
   },
   selectedContainer: {
-    backgroundColor: "#D6EAF8",
+    backgroundColor: "#EBF5FB",
     borderColor: "#74B9FF",
   },
   correctContainer: {
-    backgroundColor: "#D5F5E3",
+    backgroundColor: "#EAFAF1",
     borderColor: "#00B894",
   },
   wrongContainer: {
-    backgroundColor: "#FADBD8",
+    backgroundColor: "#FDEDEC",
     borderColor: "#E17055",
   },
-  prefixContainer: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: "#F0F0F0",
+  prefixCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "#F5F6FA",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
   },
-  prefix: {
+  prefixText: {
     fontSize: 14,
     fontWeight: "700",
     color: "#636E72",
   },
-  selectedPrefix: {
+  selectedPrefixBg: {
+    backgroundColor: "#D6EAF8",
+  },
+  selectedPrefixText: {
     color: "#0984E3",
   },
-  correctPrefix: {
-    color: "#00B894",
+  correctPrefixBg: {
     backgroundColor: "#D5F5E3",
   },
-  wrongPrefix: {
-    color: "#E17055",
+  correctPrefixText: {
+    color: "#00B894",
+  },
+  wrongPrefixBg: {
     backgroundColor: "#FADBD8",
   },
-  optionLabel: {
+  wrongPrefixText: {
+    color: "#E17055",
+  },
+  label: {
     flex: 1,
     fontSize: 15,
     color: "#2D3436",
     lineHeight: 22,
   },
-  icon: {
+  checkIcon: {
     fontSize: 18,
     fontWeight: "700",
     color: "#00B894",
     marginLeft: 8,
   },
-  wrongIcon: {
+  crossIcon: {
+    fontSize: 18,
+    fontWeight: "700",
     color: "#E17055",
+    marginLeft: 8,
   },
 });

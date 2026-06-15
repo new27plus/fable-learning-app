@@ -39,16 +39,26 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 14,
     paddingHorizontal: 24,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 6,
   },
   primary: {
     backgroundColor: "#E17055",
+    shadowColor: "#E17055",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   secondary: {
     backgroundColor: "#636E72",
+    shadowColor: "#636E72",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
   },
   outline: {
     backgroundColor: "transparent",

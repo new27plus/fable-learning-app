@@ -55,9 +55,6 @@ export default function QuizScreen() {
       setSelectedIndex(null);
       setState("answering");
     } else {
-      const finalScore = selectedIndex === question.answerIndex
-        ? score
-        : score;
       addLearningRecord(concept.id, score, concept.questions.length);
       setShowResult(true);
       setState("finished");
@@ -65,20 +62,19 @@ export default function QuizScreen() {
   };
 
   if (showResult) {
+    const pct = Math.round((score / concept.questions.length) * 100);
     return (
       <View style={styles.container}>
         <View style={styles.resultCard}>
+          <View style={styles.scoreCircle}>
+            <Text style={styles.scoreNumber}>{score}</Text>
+            <Text style={styles.scoreSlash}>/</Text>
+            <Text style={styles.scoreTotal}>{concept.questions.length}</Text>
+          </View>
           <Text style={styles.resultEmoji}>
-            {score === concept.questions.length
-              ? "🎉"
-              : score >= concept.questions.length / 2
-              ? "👍"
-              : "💪"}
+            {score === concept.questions.length ? "🎉" : score >= concept.questions.length / 2 ? "👍" : "💪"}
           </Text>
           <Text style={styles.resultTitle}>测验完成！</Text>
-          <Text style={styles.resultScore}>
-            {score} / {concept.questions.length}
-          </Text>
           <Text style={styles.resultDesc}>
             {score === concept.questions.length
               ? "满分通过，太棒了！"
@@ -87,16 +83,8 @@ export default function QuizScreen() {
               : "没关系，多学几次就好了！"}
           </Text>
           <View style={styles.resultActions}>
-            <PrimaryButton
-              title="返回首页"
-              variant="secondary"
-              onPress={() => router.push("/")}
-            />
-            <PrimaryButton
-              title="再看一遍概念"
-              variant="outline"
-              onPress={() => router.push(`/concept/${id}/explanation`)}
-            />
+            <PrimaryButton title="返回首页" variant="secondary" onPress={() => router.push("/")} />
+            <PrimaryButton title="再看一遍概念" variant="outline" onPress={() => router.push(`/concept/${id}/explanation`)} />
           </View>
         </View>
       </View>
@@ -105,22 +93,27 @@ export default function QuizScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.progressBar}>
-        <View
-          style={[
-            styles.progressFill,
-            {
-              width: `${((currentIndex + 1) / concept.questions.length) * 100}%`,
-            },
-          ]}
-        />
+      {/* Progress */}
+      <View style={styles.progressWrapper}>
+        <View style={styles.progressBar}>
+          <View
+            style={[
+              styles.progressFill,
+              { width: `${((currentIndex + 1) / concept.questions.length) * 100}%` },
+            ]}
+          />
+        </View>
+        <Text style={styles.progressText}>
+          {currentIndex + 1} / {concept.questions.length}
+        </Text>
       </View>
-      <Text style={styles.progressText}>
-        第 {currentIndex + 1} / {concept.questions.length} 题
-      </Text>
 
-      <Text style={styles.questionText}>{question.question}</Text>
+      {/* Question card */}
+      <View style={styles.questionCard}>
+        <Text style={styles.questionText}>{question.question}</Text>
+      </View>
 
+      {/* Options */}
       <View style={styles.options}>
         {question.options.map((opt, i) => (
           <QuizOption
@@ -143,18 +136,15 @@ export default function QuizScreen() {
         ))}
       </View>
 
+      {/* Feedback */}
       {state === "answered" && (
-        <View style={styles.feedbackCard}>
+        <View style={[styles.feedbackCard, isCorrect ? styles.feedbackCorrect : styles.feedbackWrong]}>
           <Text style={isCorrect ? styles.correctTitle : styles.wrongTitle}>
             {isCorrect ? "✅ 回答正确！" : "❌ 回答错误"}
           </Text>
           <Text style={styles.explanation}>{question.explanation}</Text>
           <PrimaryButton
-            title={
-              currentIndex < concept.questions.length - 1
-                ? "下一题"
-                : "查看结果"
-            }
+            title={currentIndex < concept.questions.length - 1 ? "下一题" : "查看结果"}
             onPress={handleNext}
           />
         </View>
@@ -167,40 +157,74 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFF8F0" },
   content: { padding: 20, paddingBottom: 40 },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
+
+  // Progress
+  progressWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
   progressBar: {
-    height: 6,
+    flex: 1,
+    height: 8,
     backgroundColor: "#E8E8E8",
-    borderRadius: 3,
-    marginBottom: 8,
+    borderRadius: 4,
+    marginRight: 10,
+    overflow: "hidden",
   },
   progressFill: {
-    height: 6,
+    height: 8,
     backgroundColor: "#E17055",
-    borderRadius: 3,
+    borderRadius: 4,
   },
   progressText: {
-    fontSize: 13,
+    fontSize: 14,
+    fontWeight: "600",
     color: "#636E72",
+    minWidth: 40,
+  },
+
+  // Question
+  questionCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 20,
     marginBottom: 20,
+    shadowColor: "#2D3436",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
   },
   questionText: {
     fontSize: 18,
     fontWeight: "700",
     color: "#2D3436",
-    marginBottom: 20,
     lineHeight: 28,
   },
-  options: { marginBottom: 20 },
+
+  options: { marginBottom: 16 },
+
+  // Feedback
   feedbackCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 8,
-    shadowColor: "#000",
+    borderRadius: 14,
+    padding: 18,
+    marginTop: 4,
+    shadowColor: "#2D3436",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  feedbackCorrect: {
+    backgroundColor: "#EAFAF1",
+    borderLeftWidth: 4,
+    borderLeftColor: "#00B894",
+  },
+  feedbackWrong: {
+    backgroundColor: "#FDEDEC",
+    borderLeftWidth: 4,
+    borderLeftColor: "#E17055",
   },
   correctTitle: {
     fontSize: 17,
@@ -220,30 +244,57 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginBottom: 16,
   },
+
+  // Result
   resultCard: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 40,
+    backgroundColor: "#FFF8F0",
   },
-  resultEmoji: { fontSize: 60, marginBottom: 16 },
+  scoreCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    shadowColor: "#E17055",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 6,
+    marginBottom: 20,
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
+  scoreNumber: {
+    fontSize: 42,
+    fontWeight: "800",
+    color: "#E17055",
+  },
+  scoreSlash: {
+    fontSize: 22,
+    color: "#B2BEC3",
+    marginHorizontal: 2,
+  },
+  scoreTotal: {
+    fontSize: 22,
+    color: "#B2BEC3",
+  },
+  resultEmoji: { fontSize: 48, marginBottom: 12 },
   resultTitle: {
     fontSize: 24,
     fontWeight: "800",
     color: "#2D3436",
-    marginBottom: 12,
-  },
-  resultScore: {
-    fontSize: 48,
-    fontWeight: "800",
-    color: "#E17055",
-    marginBottom: 12,
+    marginBottom: 8,
   },
   resultDesc: {
     fontSize: 16,
     color: "#636E72",
     marginBottom: 32,
     textAlign: "center",
+    lineHeight: 24,
   },
   resultActions: { width: "100%", gap: 8 },
 });
