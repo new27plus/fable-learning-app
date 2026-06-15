@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(python3 fix_quotes.py)",
+      "Bash(npx tsc *)",
+      "Bash(python gen_concepts.py)",
+      "Bash(node -e \"const c = require\\('./src/data/concepts.ts'\\); console.log\\('concepts count:', c.concepts.length\\)\")",
+      "Bash(npx expo *)",
+      "Bash(npm install *)",
+      "Bash(git status *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}
