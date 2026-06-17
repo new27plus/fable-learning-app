@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { colors, typography, spacing, radius, shadows } from "../theme/tokens";
 
 interface Props {
   title: string;
@@ -17,7 +18,7 @@ export default function SectionCard({ title, children, onPress }: Props) {
 
   if (onPress) {
     return (
-      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+      <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
         {content}
       </TouchableOpacity>
     );
@@ -27,21 +28,16 @@ export default function SectionCard({ title, children, onPress }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    backgroundColor: colors.surfaceBright,
+    borderRadius: radius.lg,
+    padding: spacing.base,
+    marginBottom: spacing.base,
+    ...shadows.md,
   },
   title: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#2D3436",
-    marginBottom: 12,
+    ...typography.titleMedium,
+    color: colors.onSurface,
+    marginBottom: spacing.md,
   },
   content: {},
 });

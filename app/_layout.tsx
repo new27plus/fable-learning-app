@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { initDatabase } from "../src/lib/db";
+import { colors, typography } from "../src/theme/tokens";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -13,10 +14,15 @@ export default function RootLayout() {
       <StatusBar style="dark" />
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: "#FFF8F0" },
-          headerTintColor: "#2D3436",
-          headerTitleStyle: { fontWeight: "600" },
-          contentStyle: { backgroundColor: "#FFF8F0" },
+          headerStyle: { backgroundColor: colors.surface },
+          headerTintColor: colors.onSurface,
+          headerTitleStyle: {
+            ...typography.titleMedium,
+            color: colors.onSurface,
+          },
+          headerShadowVisible: false,
+          contentStyle: { backgroundColor: colors.surface },
+          animation: "slide_from_right",
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />

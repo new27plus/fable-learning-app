@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { colors, typography, spacing, radius } from "../theme/tokens";
 
 interface Metaphor {
   fableElement: string;
@@ -37,38 +38,37 @@ export default function MetaphorTable({ data }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 12,
+    borderRadius: radius.md,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#E8E8E8",
-    backgroundColor: "#FFFFFF",
+    borderColor: colors.outlineVariant,
+    backgroundColor: colors.surfaceBright,
   },
   headerRow: {
     flexDirection: "row",
-    backgroundColor: "#E17055",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.sm + 2,
+    paddingHorizontal: spacing.sm + 2,
   },
   headerCell: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#FFFFFF",
+    ...typography.labelMedium,
+    color: colors.onPrimary,
   },
   row: {
     flexDirection: "row",
-    paddingVertical: 12,
-    paddingHorizontal: 10,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.sm + 2,
   },
   evenRow: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surfaceBright,
   },
   oddRow: {
-    backgroundColor: "#FFF8F0",
+    backgroundColor: colors.surfaceContainerLow,
   },
   cell: {
-    fontSize: 13,
-    color: "#2D3436",
-    lineHeight: 19,
+    ...typography.bodySmall,
+    color: colors.onSurface,
+    lineHeight: 20,
   },
   col1: {
     flex: 2,
@@ -80,9 +80,9 @@ const styles = StyleSheet.create({
     flex: 3,
   },
   theoryCell: {
-    fontSize: 13,
+    ...typography.bodySmall,
     fontWeight: "600",
-    color: "#E17055",
-    lineHeight: 19,
+    color: colors.primary,
+    lineHeight: 20,
   },
 });

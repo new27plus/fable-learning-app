@@ -4,6 +4,7 @@ import { useFocusEffect } from "expo-router";
 import { initDatabase, getWrongAnswers } from "../src/lib/db";
 import { concepts } from "../src/data/concepts";
 import { getFieldColor } from "../src/utils/concept";
+import { colors, typography, spacing, radius, shadows } from "../src/theme/tokens";
 import type { WrongAnswer } from "../src/types/concept";
 
 export default function WrongAnswersScreen() {
@@ -29,21 +30,21 @@ export default function WrongAnswersScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.screen}>
       <FlatList
         data={wrongs}
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => {
           const concept = concepts.find((c) => c.id === item.concept_id);
-          const fieldColor = concept ? getFieldColor(concept.field) : "#636E72";
+          const fieldColor = concept ? getFieldColor(concept.field) : colors.onSurfaceVariant;
           return (
             <View style={styles.card}>
               <View style={styles.cardHeader}>
                 <Text style={styles.conceptTag}>
                   {concept?.conceptName || item.concept_id}
                 </Text>
-                <View style={[styles.fieldTag, { backgroundColor: fieldColor + "15" }]}>
+                <View style={[styles.fieldTag, { backgroundColor: fieldColor + "14" }]}>
                   <Text style={[styles.fieldText, { color: fieldColor }]}>{concept?.field}</Text>
                 </View>
               </View>
@@ -72,92 +73,112 @@ export default function WrongAnswersScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF8F0" },
-  list: { padding: 20 },
+  screen: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
+  list: { padding: spacing.lg },
   card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#2D3436",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
+    backgroundColor: colors.surfaceBright,
+    borderRadius: radius.lg,
+    padding: spacing.base,
+    marginBottom: spacing.md,
+    ...shadows.md,
   },
   cardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
-  conceptTag: { fontSize: 14, fontWeight: "700", color: "#2D3436", flex: 1 },
+  conceptTag: {
+    ...typography.titleSmall,
+    color: colors.onSurface,
+    flex: 1,
+  },
   fieldTag: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    marginLeft: 8,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.xs,
+    marginLeft: spacing.sm,
   },
-  fieldText: { fontSize: 12, fontWeight: "600" },
+  fieldText: { ...typography.labelSmall },
   question: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#2D3436",
-    marginBottom: 12,
-    lineHeight: 22,
+    ...typography.titleSmall,
+    color: colors.onSurface,
+    marginBottom: spacing.md,
   },
   answerBox: {
-    backgroundColor: "#F8F9FA",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
+    backgroundColor: colors.surfaceContainerLow,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginBottom: spacing.sm + 2,
   },
   answerRow: {
     flexDirection: "row",
     alignItems: "center",
   },
   answerDivider: {
-    height: 1,
-    backgroundColor: "#E8E8E8",
-    marginVertical: 8,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.outlineVariant,
+    marginVertical: spacing.sm,
   },
-  answerLabel: { fontSize: 12, color: "#B2BEC3", width: 60 },
+  answerLabel: {
+    ...typography.bodySmall,
+    color: colors.onSurfaceVariant,
+    width: 60,
+  },
   wrongAnswer: {
-    fontSize: 14,
-    color: "#E17055",
+    ...typography.body,
+    color: colors.error,
     fontWeight: "600",
     flex: 1,
   },
   correctAnswer: {
-    fontSize: 14,
-    color: "#00B894",
+    ...typography.body,
+    color: colors.success,
     fontWeight: "600",
     flex: 1,
   },
   explanationBox: {
-    backgroundColor: "#FFF8F0",
-    borderRadius: 10,
-    padding: 12,
+    backgroundColor: colors.surfaceContainerLow,
+    borderRadius: radius.md,
+    padding: spacing.md,
   },
-  explanationLabel: { fontSize: 13, fontWeight: "600", color: "#636E72", marginBottom: 6 },
-  explanation: { fontSize: 13, color: "#636E72", lineHeight: 20 },
+  explanationLabel: {
+    ...typography.labelMedium,
+    color: colors.onSurfaceVariant,
+    marginBottom: spacing.sm,
+  },
+  explanation: {
+    ...typography.bodySmall,
+    color: colors.onSurfaceVariant,
+  },
   empty: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFF8F0",
-    padding: 40,
+    backgroundColor: colors.surface,
+    padding: spacing.xxxl,
   },
   emptyIconBg: {
     width: 72,
     height: 72,
-    borderRadius: 36,
-    backgroundColor: "#FDCB6E" + "20",
+    borderRadius: radius.full,
+    backgroundColor: colors.tertiaryContainer,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 16,
+    marginBottom: spacing.base,
   },
   emptyIcon: { fontSize: 32 },
-  emptyText: { fontSize: 18, fontWeight: "700", color: "#2D3436", marginBottom: 8 },
-  emptyHint: { fontSize: 14, color: "#B2BEC3", textAlign: "center" },
+  emptyText: {
+    ...typography.titleMedium,
+    color: colors.onSurface,
+    marginBottom: spacing.sm,
+  },
+  emptyHint: {
+    ...typography.body,
+    color: colors.onSurfaceVariant,
+    textAlign: "center",
+  },
 });

@@ -19,7 +19,7 @@ npm run lint         # Expo lint
 
 ## Architecture
 
-**Stack:** Expo SDK 52, React Native 0.76, TypeScript, Expo Router 4, expo-sqlite 15
+**Stack:** Expo SDK 54, React Native 0.81, TypeScript, Expo Router 6, expo-sqlite 16
 
 **Routing:** File-based via Expo Router (`app/` directory). Root layout in `app/_layout.tsx` initializes the SQLite database on mount via `useEffect`. All routes use `Stack` navigator. Dynamic segments use `[id]`/`[field]` brackets.
 
@@ -50,8 +50,11 @@ If adding a new field, update the `Field` type in `src/types/concept.ts` and the
 
 ## Design Tokens
 
-- Background: `#FFF8F0` (warm cream)
-- Primary accent: `#E17055`
-- Text primary: `#2D3436`
-- Text secondary: `#636E72`
-- Cards: white with subtle shadow, 12px border radius
+All design tokens live in `src/theme/tokens.ts`. Import `colors`, `typography`, `spacing`, `radius`, `shadows` from there. The design fuses Apple HIG (clean hierarchy, whitespace), Material 3 (tonal color system, color roles), and HarmonyOS (ultra-rounded corners, soft warmth).
+
+Key values:
+- Surface: `#FEFCF9` (warm off-white)
+- Primary: `#D4603A` (terracotta)
+- Text: `#1C1B18` (onSurface), `#6B6660` (onSurfaceVariant)
+- Cards: `surfaceBright` (#FFFFFF), `radius.lg` (20px), `shadows.md`
+- Field colors are in `fieldColors` within tokens.ts, re-exported via `FIELD_COLORS` in `src/utils/concept.ts`

@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { colors, typography, spacing, radius, shadows } from "../src/theme/tokens";
 
 export default function SettingsScreen() {
   return (
-    <View style={styles.container}>
+    <View style={styles.screen}>
       {/* App info */}
       <View style={styles.logoSection}>
         <View style={styles.logoBg}>
@@ -62,75 +63,104 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF8F0", padding: 20 },
+  screen: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    padding: spacing.lg,
+  },
 
   // Logo
-  logoSection: { alignItems: "center", marginBottom: 28, marginTop: 8 },
+  logoSection: {
+    alignItems: "center",
+    marginBottom: spacing.xxl,
+    marginTop: spacing.sm,
+  },
   logoBg: {
     width: 64,
     height: 64,
-    borderRadius: 32,
-    backgroundColor: "#E17055" + "18",
+    borderRadius: radius.full,
+    backgroundColor: colors.primaryContainer,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
   logoEmoji: { fontSize: 32 },
-  appName: { fontSize: 22, fontWeight: "800", color: "#E17055" },
-  appDesc: { fontSize: 14, color: "#B2BEC3", marginTop: 4 },
+  appName: {
+    ...typography.headline,
+    color: colors.primary,
+  },
+  appDesc: {
+    ...typography.body,
+    color: colors.onSurfaceVariant,
+    marginTop: spacing.xs,
+  },
 
   // Cards
   card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 14,
-    shadowColor: "#2D3436",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
+    backgroundColor: colors.surfaceBright,
+    borderRadius: radius.lg,
+    padding: spacing.base,
+    marginBottom: spacing.md,
+    ...shadows.md,
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: spacing.sm + 2,
   },
-  label: { fontSize: 15, color: "#2D3436", fontWeight: "600" },
-  value: { fontSize: 14, color: "#636E72" },
+  label: {
+    ...typography.titleSmall,
+    color: colors.onSurface,
+  },
+  value: {
+    ...typography.body,
+    color: colors.onSurfaceVariant,
+  },
   valueTag: {
-    backgroundColor: "#E17055" + "15",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
+    backgroundColor: colors.primaryContainer,
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: spacing.xs + 1,
+    borderRadius: radius.xs,
   },
-  valueText: { fontSize: 13, fontWeight: "600", color: "#E17055" },
-  divider: { height: 1, backgroundColor: "#F5F6FA" },
+  valueText: {
+    ...typography.labelMedium,
+    color: colors.primary,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.outlineVariant,
+  },
   sectionTitle: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#2D3436",
-    marginBottom: 8,
+    ...typography.titleSmall,
+    color: colors.onSurface,
+    marginBottom: spacing.sm,
   },
   placeholderRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: spacing.sm + 2,
   },
-  placeholderIcon: { fontSize: 18, marginRight: 10 },
-  placeholderText: { fontSize: 14, color: "#636E72", flex: 1 },
+  placeholderIcon: { fontSize: 18, marginRight: spacing.sm + 2 },
+  placeholderText: {
+    ...typography.body,
+    color: colors.onSurfaceVariant,
+    flex: 1,
+  },
   comingSoonTag: {
-    backgroundColor: "#F5F6FA",
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
+    backgroundColor: colors.surfaceContainer,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.xs,
   },
-  comingSoonText: { fontSize: 11, color: "#B2BEC3", fontWeight: "500" },
+  comingSoonText: {
+    ...typography.labelSmall,
+    color: colors.onSurfaceVariant,
+  },
   footer: {
     textAlign: "center",
-    fontSize: 13,
-    color: "#B2BEC3",
-    marginTop: 12,
+    ...typography.bodySmall,
+    color: colors.onSurfaceVariant,
+    marginTop: spacing.md,
   },
 });

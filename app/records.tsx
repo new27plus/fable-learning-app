@@ -4,6 +4,7 @@ import { useFocusEffect } from "expo-router";
 import { initDatabase, getLearningRecords } from "../src/lib/db";
 import { concepts } from "../src/data/concepts";
 import { getFieldColor } from "../src/utils/concept";
+import { colors, typography, spacing, radius, shadows } from "../src/theme/tokens";
 import type { LearningRecord } from "../src/types/concept";
 
 export default function RecordsScreen() {
@@ -29,14 +30,14 @@ export default function RecordsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.screen}>
       <FlatList
         data={records}
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => {
           const concept = concepts.find((c) => c.id === item.concept_id);
-          const fieldColor = concept ? getFieldColor(concept.field) : "#636E72";
+          const fieldColor = concept ? getFieldColor(concept.field) : colors.onSurfaceVariant;
           return (
             <View style={styles.card}>
               <View style={[styles.cardAccent, { backgroundColor: fieldColor }]} />
@@ -45,7 +46,7 @@ export default function RecordsScreen() {
                   <Text style={styles.conceptName}>
                     {concept?.conceptName || item.concept_id}
                   </Text>
-                  <View style={[styles.fieldTag, { backgroundColor: fieldColor + "15" }]}>
+                  <View style={[styles.fieldTag, { backgroundColor: fieldColor + "14" }]}>
                     <Text style={[styles.fieldText, { color: fieldColor }]}>{concept?.field}</Text>
                   </View>
                 </View>
@@ -68,62 +69,84 @@ export default function RecordsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF8F0" },
-  list: { padding: 20 },
+  screen: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
+  list: { padding: spacing.lg },
   card: {
     flexDirection: "row",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    marginBottom: 12,
-    shadowColor: "#2D3436",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
+    backgroundColor: colors.surfaceBright,
+    borderRadius: radius.lg,
+    marginBottom: spacing.md,
+    ...shadows.md,
     overflow: "hidden",
   },
-  cardAccent: { width: 5 },
-  cardBody: { flex: 1, padding: 16 },
+  cardAccent: { width: 4 },
+  cardBody: { flex: 1, padding: spacing.base },
   cardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
-  conceptName: { fontSize: 16, fontWeight: "700", color: "#2D3436", flex: 1 },
+  conceptName: {
+    ...typography.titleSmall,
+    color: colors.onSurface,
+    flex: 1,
+  },
   fieldTag: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    marginLeft: 8,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.xs,
+    marginLeft: spacing.sm,
   },
-  fieldText: { fontSize: 12, fontWeight: "600" },
+  fieldText: { ...typography.labelSmall },
   cardFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   scoreRow: { flexDirection: "row", alignItems: "baseline" },
-  scoreValue: { fontSize: 24, fontWeight: "800", color: "#E17055" },
-  scoreTotal: { fontSize: 14, color: "#B2BEC3", marginLeft: 2 },
-  date: { fontSize: 13, color: "#B2BEC3" },
+  scoreValue: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: colors.primary,
+  },
+  scoreTotal: {
+    ...typography.body,
+    color: colors.onSurfaceVariant,
+    marginLeft: 2,
+  },
+  date: {
+    ...typography.bodySmall,
+    color: colors.onSurfaceVariant,
+  },
   empty: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFF8F0",
-    padding: 40,
+    backgroundColor: colors.surface,
+    padding: spacing.xxxl,
   },
   emptyIconBg: {
     width: 72,
     height: 72,
-    borderRadius: 36,
-    backgroundColor: "#0984E3" + "15",
+    borderRadius: radius.full,
+    backgroundColor: colors.secondaryContainer,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 16,
+    marginBottom: spacing.base,
   },
   emptyIcon: { fontSize: 32 },
-  emptyText: { fontSize: 18, fontWeight: "700", color: "#2D3436", marginBottom: 8 },
-  emptyHint: { fontSize: 14, color: "#B2BEC3", textAlign: "center" },
+  emptyText: {
+    ...typography.titleMedium,
+    color: colors.onSurface,
+    marginBottom: spacing.sm,
+  },
+  emptyHint: {
+    ...typography.body,
+    color: colors.onSurfaceVariant,
+    textAlign: "center",
+  },
 });

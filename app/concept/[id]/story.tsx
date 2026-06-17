@@ -3,6 +3,8 @@ import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { concepts } from "../../../src/data/concepts";
 import PrimaryButton from "../../../src/components/PrimaryButton";
+import { colors, typography, spacing, radius } from "../../../src/theme/tokens";
+import { getFieldColor } from "../../../src/utils/concept";
 
 export default function StoryScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -12,15 +14,18 @@ export default function StoryScreen() {
   if (!concept) {
     return (
       <View style={styles.center}>
-        <Text>概念未找到</Text>
+        <Text style={typography.body}>概念未找到</Text>
       </View>
     );
   }
 
+  const fieldColor = getFieldColor(concept.field);
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+      {/* Header badges */}
       <View style={styles.storyHeader}>
-        <View style={styles.fieldBadge}>
+        <View style={[styles.fieldBadge, { backgroundColor: fieldColor }]}>
           <Text style={styles.fieldText}>{concept.field}</Text>
         </View>
         <View style={styles.levelBadge}>
@@ -28,19 +33,17 @@ export default function StoryScreen() {
         </View>
       </View>
 
-      <View style={styles.quoteDecor}>
-        <Text style={styles.quoteChar}>"</Text>
-      </View>
-
+      {/* Title */}
       <Text style={styles.storyTitle}>{concept.storyTitle}</Text>
 
       <View style={styles.divider} />
 
+      {/* Fable body */}
       <Text style={styles.fable}>{concept.fable}</Text>
 
+      {/* Reveal section */}
       <View style={styles.revealSection}>
         <View style={styles.revealDivider} />
-        <Text style={styles.revealEmoji}>🔍</Text>
         <Text style={styles.hint}>准备好了解这个概念了吗？</Text>
         <PrimaryButton
           title="揭示概念"
@@ -52,74 +55,76 @@ export default function StoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF8F0" },
-  content: { padding: 20, paddingBottom: 40 },
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+  screen: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
+  content: {
+    padding: spacing.lg,
+    paddingBottom: spacing.xxxl,
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.surface,
+  },
   storyHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: spacing.base,
   },
   fieldBadge: {
-    backgroundColor: "#E17055",
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 8,
-    marginRight: 8,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 1,
+    borderRadius: radius.xs,
+    marginRight: spacing.sm,
   },
-  fieldText: { fontSize: 13, fontWeight: "600", color: "#FFF" },
+  fieldText: {
+    ...typography.labelMedium,
+    color: colors.onPrimary,
+  },
   levelBadge: {
-    backgroundColor: "#F5F6FA",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
+    backgroundColor: colors.surfaceContainer,
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: spacing.xs + 1,
+    borderRadius: radius.xs,
   },
-  levelText: { fontSize: 13, color: "#636E72", fontWeight: "500" },
-  quoteDecor: {
-    marginBottom: 4,
-  },
-  quoteChar: {
-    fontSize: 48,
-    color: "#E17055",
-    fontWeight: "800",
-    lineHeight: 52,
-    opacity: 0.3,
+  levelText: {
+    ...typography.labelMedium,
+    color: colors.onSurfaceVariant,
   },
   storyTitle: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: "#2D3436",
-    marginBottom: 16,
-    lineHeight: 36,
+    ...typography.displaySmall,
+    color: colors.onSurface,
+    marginBottom: spacing.base,
   },
   divider: {
     height: 3,
-    backgroundColor: "#E17055",
+    backgroundColor: colors.primary,
     width: 36,
-    marginBottom: 24,
+    marginBottom: spacing.xl,
     borderRadius: 2,
   },
   fable: {
-    fontSize: 18,
-    color: "#2D3436",
-    lineHeight: 34,
+    ...typography.bodyLarge,
+    color: colors.onSurface,
     textAlign: "justify",
   },
   revealSection: {
-    marginTop: 36,
+    marginTop: spacing.xxxl,
     alignItems: "center",
-    paddingTop: 24,
+    paddingTop: spacing.xl,
   },
   revealDivider: {
-    width: 60,
+    width: 48,
     height: 1,
-    backgroundColor: "#DDD",
-    marginBottom: 20,
+    backgroundColor: colors.outlineVariant,
+    marginBottom: spacing.lg,
   },
-  revealEmoji: { fontSize: 28, marginBottom: 10 },
   hint: {
-    fontSize: 15,
-    color: "#636E72",
-    marginBottom: 16,
+    ...typography.body,
+    color: colors.onSurfaceVariant,
+    marginBottom: spacing.base,
   },
 });

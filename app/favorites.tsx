@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { initDatabase, getFavorites } from "../src/lib/db";
 import { concepts } from "../src/data/concepts";
 import ConceptCard from "../src/components/ConceptCard";
+import { colors, typography, spacing, radius } from "../src/theme/tokens";
 
 export default function FavoritesScreen() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function FavoritesScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.screen}>
       <FlatList
         data={favoriteConcepts}
         keyExtractor={(item) => item.id}
@@ -51,25 +52,36 @@ export default function FavoritesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF8F0" },
-  list: { padding: 20 },
+  screen: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
+  list: { padding: spacing.lg },
   empty: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFF8F0",
-    padding: 40,
+    backgroundColor: colors.surface,
+    padding: spacing.xxxl,
   },
   emptyIconBg: {
     width: 72,
     height: 72,
-    borderRadius: 36,
-    backgroundColor: "#E17055" + "15",
+    borderRadius: radius.full,
+    backgroundColor: colors.errorContainer,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 16,
+    marginBottom: spacing.base,
   },
   emptyIcon: { fontSize: 32 },
-  emptyText: { fontSize: 18, fontWeight: "700", color: "#2D3436", marginBottom: 8 },
-  emptyHint: { fontSize: 14, color: "#B2BEC3", textAlign: "center" },
+  emptyText: {
+    ...typography.titleMedium,
+    color: colors.onSurface,
+    marginBottom: spacing.sm,
+  },
+  emptyHint: {
+    ...typography.body,
+    color: colors.onSurfaceVariant,
+    textAlign: "center",
+  },
 });

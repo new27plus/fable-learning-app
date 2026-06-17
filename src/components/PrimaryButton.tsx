@@ -1,5 +1,6 @@
 import React from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
+import { colors, typography, spacing, radius, shadows } from "../theme/tokens";
 
 interface Props {
   title: string;
@@ -19,6 +20,8 @@ export default function PrimaryButton({ title, onPress, variant = "primary", dis
 
   const textStyle = [
     styles.text,
+    variant === "primary" && styles.primaryText,
+    variant === "secondary" && styles.secondaryText,
     variant === "outline" && styles.outlineText,
     disabled && styles.disabledText,
   ];
@@ -28,7 +31,7 @@ export default function PrimaryButton({ title, onPress, variant = "primary", dis
       style={buttonStyle}
       onPress={onPress}
       disabled={disabled}
-      activeOpacity={0.7}
+      activeOpacity={0.8}
     >
       <Text style={textStyle}>{title}</Text>
     </TouchableOpacity>
@@ -37,44 +40,39 @@ export default function PrimaryButton({ title, onPress, variant = "primary", dis
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 12,
+    paddingVertical: spacing.md + 2,
+    paddingHorizontal: spacing.xl,
+    borderRadius: radius.lg,
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 6,
+    marginVertical: spacing.sm,
   },
   primary: {
-    backgroundColor: "#E17055",
-    shadowColor: "#E17055",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    backgroundColor: colors.primary,
+    ...shadows.glow(colors.primary),
   },
   secondary: {
-    backgroundColor: "#636E72",
-    shadowColor: "#636E72",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 2,
+    backgroundColor: colors.surfaceContainerHigh,
   },
   outline: {
     backgroundColor: "transparent",
     borderWidth: 1.5,
-    borderColor: "#E17055",
+    borderColor: colors.primary,
   },
   disabled: {
-    opacity: 0.5,
+    opacity: 0.4,
   },
   text: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
+    ...typography.labelLarge,
+  },
+  primaryText: {
+    color: colors.onPrimary,
+  },
+  secondaryText: {
+    color: colors.onSurface,
   },
   outlineText: {
-    color: "#E17055",
+    color: colors.primary,
   },
   disabledText: {
     opacity: 0.7,

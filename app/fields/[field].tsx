@@ -5,6 +5,7 @@ import { concepts } from "../../src/data/concepts";
 import ConceptCard from "../../src/components/ConceptCard";
 import { initDatabase, getLearningRecords, getFavorites } from "../../src/lib/db";
 import { getFieldColor, getFieldIcon } from "../../src/utils/concept";
+import { colors, typography, spacing, radius } from "../../src/theme/tokens";
 
 export default function FieldList() {
   const { field } = useLocalSearchParams<{ field: string }>();
@@ -25,9 +26,9 @@ export default function FieldList() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.header, { backgroundColor: fieldColor + "10" }]}>
-        <View style={[styles.iconBg, { backgroundColor: fieldColor + "20" }]}>
+    <View style={styles.screen}>
+      <View style={[styles.header, { backgroundColor: fieldColor + "0D" }]}>
+        <View style={[styles.iconBg, { backgroundColor: fieldColor + "18" }]}>
           <Text style={styles.icon}>{fieldIcon}</Text>
         </View>
         <View style={styles.headerInfo}>
@@ -53,24 +54,36 @@ export default function FieldList() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF8F0" },
+  screen: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 20,
-    paddingBottom: 16,
+    padding: spacing.lg,
+    paddingBottom: spacing.base,
   },
   iconBg: {
     width: 52,
     height: 52,
-    borderRadius: 26,
+    borderRadius: radius.full,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 14,
+    marginRight: spacing.md,
   },
   icon: { fontSize: 26 },
   headerInfo: { flex: 1 },
-  fieldName: { fontSize: 22, fontWeight: "800" },
-  count: { fontSize: 13, color: "#B2BEC3", marginTop: 2 },
-  list: { padding: 20, paddingTop: 8 },
+  fieldName: {
+    ...typography.headline,
+  },
+  count: {
+    ...typography.bodySmall,
+    color: colors.onSurfaceVariant,
+    marginTop: 2,
+  },
+  list: {
+    padding: spacing.lg,
+    paddingTop: spacing.sm,
+  },
 });

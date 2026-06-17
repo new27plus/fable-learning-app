@@ -4,7 +4,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { concepts } from "../../../src/data/concepts";
 import QuizOption from "../../../src/components/QuizOption";
 import PrimaryButton from "../../../src/components/PrimaryButton";
-import { initDatabase, addLearningRecord, addWrongAnswer } from "../../../src/lib/db";
+import { addLearningRecord, addWrongAnswer } from "../../../src/lib/db";
+import { colors, typography, spacing, radius, shadows } from "../../../src/theme/tokens";
 
 type QuizState = "answering" | "answered" | "finished";
 
@@ -22,7 +23,7 @@ export default function QuizScreen() {
   if (!concept) {
     return (
       <View style={styles.center}>
-        <Text>概念未找到</Text>
+        <Text style={typography.body}>概念未找到</Text>
       </View>
     );
   }
@@ -62,9 +63,8 @@ export default function QuizScreen() {
   };
 
   if (showResult) {
-    const pct = Math.round((score / concept.questions.length) * 100);
     return (
-      <View style={styles.container}>
+      <View style={styles.resultScreen}>
         <View style={styles.resultCard}>
           <View style={styles.scoreCircle}>
             <Text style={styles.scoreNumber}>{score}</Text>
@@ -92,7 +92,7 @@ export default function QuizScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       {/* Progress */}
       <View style={styles.progressWrapper}>
         <View style={styles.progressBar}>
@@ -154,147 +154,141 @@ export default function QuizScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF8F0" },
-  content: { padding: 20, paddingBottom: 40 },
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+  screen: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
+  content: {
+    padding: spacing.lg,
+    paddingBottom: spacing.xxxl,
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.surface,
+  },
 
   // Progress
   progressWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: spacing.lg,
   },
   progressBar: {
     flex: 1,
-    height: 8,
-    backgroundColor: "#E8E8E8",
-    borderRadius: 4,
-    marginRight: 10,
+    height: 6,
+    backgroundColor: colors.surfaceContainerHigh,
+    borderRadius: radius.full,
+    marginRight: spacing.sm + 2,
     overflow: "hidden",
   },
   progressFill: {
-    height: 8,
-    backgroundColor: "#E17055",
-    borderRadius: 4,
+    height: 6,
+    backgroundColor: colors.primary,
+    borderRadius: radius.full,
   },
   progressText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#636E72",
+    ...typography.labelMedium,
+    color: colors.onSurfaceVariant,
     minWidth: 40,
   },
 
   // Question
   questionCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    padding: 20,
-    marginBottom: 20,
-    shadowColor: "#2D3436",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
+    backgroundColor: colors.surfaceBright,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
+    ...shadows.md,
   },
   questionText: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#2D3436",
-    lineHeight: 28,
+    ...typography.titleLarge,
+    color: colors.onSurface,
   },
 
-  options: { marginBottom: 16 },
+  options: { marginBottom: spacing.base },
 
   // Feedback
   feedbackCard: {
-    borderRadius: 14,
-    padding: 18,
-    marginTop: 4,
-    shadowColor: "#2D3436",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
+    borderRadius: radius.lg,
+    padding: spacing.base + 2,
+    marginTop: spacing.xs,
+    ...shadows.md,
   },
   feedbackCorrect: {
-    backgroundColor: "#EAFAF1",
+    backgroundColor: colors.successContainer,
     borderLeftWidth: 4,
-    borderLeftColor: "#00B894",
+    borderLeftColor: colors.success,
   },
   feedbackWrong: {
-    backgroundColor: "#FDEDEC",
+    backgroundColor: colors.errorContainer,
     borderLeftWidth: 4,
-    borderLeftColor: "#E17055",
+    borderLeftColor: colors.error,
   },
   correctTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: "#00B894",
-    marginBottom: 10,
+    ...typography.titleMedium,
+    color: colors.success,
+    marginBottom: spacing.sm + 2,
   },
   wrongTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: "#E17055",
-    marginBottom: 10,
+    ...typography.titleMedium,
+    color: colors.error,
+    marginBottom: spacing.sm + 2,
   },
   explanation: {
-    fontSize: 14,
-    color: "#636E72",
-    lineHeight: 22,
-    marginBottom: 16,
+    ...typography.body,
+    color: colors.onSurfaceVariant,
+    marginBottom: spacing.base,
   },
 
   // Result
+  resultScreen: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
   resultCard: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 40,
-    backgroundColor: "#FFF8F0",
+    padding: spacing.xxxl,
   },
   scoreCircle: {
     width: 120,
     height: 120,
-    borderRadius: 60,
-    backgroundColor: "#FFFFFF",
+    borderRadius: radius.full,
+    backgroundColor: colors.surfaceBright,
     justifyContent: "center",
-    shadowColor: "#E17055",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 6,
-    marginBottom: 20,
+    ...shadows.lg,
+    marginBottom: spacing.lg,
     flexDirection: "row",
     alignItems: "baseline",
   },
   scoreNumber: {
-    fontSize: 42,
+    fontSize: 44,
     fontWeight: "800",
-    color: "#E17055",
+    color: colors.primary,
   },
   scoreSlash: {
     fontSize: 22,
-    color: "#B2BEC3",
+    color: colors.onSurfaceVariant,
     marginHorizontal: 2,
   },
   scoreTotal: {
     fontSize: 22,
-    color: "#B2BEC3",
+    color: colors.onSurfaceVariant,
   },
-  resultEmoji: { fontSize: 48, marginBottom: 12 },
+  resultEmoji: { fontSize: 48, marginBottom: spacing.md },
   resultTitle: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: "#2D3436",
-    marginBottom: 8,
+    ...typography.headline,
+    color: colors.onSurface,
+    marginBottom: spacing.sm,
   },
   resultDesc: {
-    fontSize: 16,
-    color: "#636E72",
-    marginBottom: 32,
+    ...typography.body,
+    color: colors.onSurfaceVariant,
+    marginBottom: spacing.xxl,
     textAlign: "center",
-    lineHeight: 24,
   },
-  resultActions: { width: "100%", gap: 8 },
+  resultActions: { width: "100%", gap: spacing.sm },
 });

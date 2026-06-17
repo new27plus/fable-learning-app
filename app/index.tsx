@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { concepts } from "../src/data/concepts";
 import { FIELDS, FIELD_ICONS, FIELD_COLORS } from "../src/utils/concept";
 import { initDatabase, getLearningRecords } from "../src/lib/db";
+import { colors, typography, spacing, radius, shadows } from "../src/theme/tokens";
 import type { Field } from "../src/types/concept";
 
 export default function HomeScreen() {
@@ -22,97 +23,101 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Hero */}
+    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+      {/* Hero — Apple-style minimal header */}
       <View style={styles.hero}>
-        <View style={styles.heroDecor}>
-          <Text style={styles.heroEmoji}>📖</Text>
-        </View>
         <Text style={styles.appName}>寓言学堂</Text>
         <Text style={styles.tagline}>用故事理解复杂概念</Text>
       </View>
 
-      {/* Today's recommendation */}
+      {/* Today's recommendation — Material 3 elevated card */}
       <TouchableOpacity
         style={styles.todayCard}
         onPress={() => router.push(`/concept/${todayConcept.id}/story`)}
-        activeOpacity={0.8}
+        activeOpacity={0.85}
       >
-        <View style={styles.todayDecor}>
-          <Text style={styles.todayDecorText}>{FIELD_ICONS[todayConcept.field as Field]}</Text>
-        </View>
-        <View style={styles.todayContent}>
-          <Text style={styles.todayLabel}>今日推荐</Text>
-          <Text style={styles.todayTitle}>{todayConcept.storyTitle}</Text>
+        <View style={styles.todayTop}>
+          <View style={styles.todayIconWrap}>
+            <Text style={styles.todayIcon}>{FIELD_ICONS[todayConcept.field as Field]}</Text>
+          </View>
           <View style={styles.todayMeta}>
-            <Text style={styles.todayField}>{todayConcept.field}</Text>
-            <Text style={styles.todayDot}>·</Text>
+            <View style={styles.todayFieldBadge}>
+              <Text style={styles.todayFieldText}>{todayConcept.field}</Text>
+            </View>
             <Text style={styles.todayLevel}>{todayConcept.level}</Text>
           </View>
         </View>
+        <Text style={styles.todayLabel}>今日推荐</Text>
+        <Text style={styles.todayTitle}>{todayConcept.storyTitle}</Text>
+        <View style={styles.todayFooter}>
+          <Text style={styles.todayAction}>开始阅读</Text>
+          <Text style={styles.todayArrow}>→</Text>
+        </View>
       </TouchableOpacity>
 
-      {/* Continue learning */}
+      {/* Continue learning — HarmonyOS flat card */}
       {lastConceptId && (
         <TouchableOpacity
           style={styles.continueCard}
           onPress={() => router.push(`/concept/${lastConceptId}/story`)}
-          activeOpacity={0.8}
+          activeOpacity={0.85}
         >
-          <View style={styles.continueIcon}>
-            <Text style={styles.continueIconText}>▶</Text>
-          </View>
+          <View style={styles.continueDot} />
           <View style={styles.continueInfo}>
             <Text style={styles.continueLabel}>继续学习</Text>
             <Text style={styles.continueHint}>上次学到的概念</Text>
           </View>
-          <Text style={styles.continueArrow}>›</Text>
+          <Text style={styles.continueArrow}>→</Text>
         </TouchableOpacity>
       )}
 
-      {/* Fields */}
+      {/* Fields — Material 3 grid with HarmonyOS softness */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>学科探索</Text>
         <View style={styles.fieldGrid}>
-          {FIELDS.map((field) => (
-            <TouchableOpacity
-              key={field}
-              style={styles.fieldCard}
-              onPress={() => router.push(`/fields/${field}`)}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.fieldIconBg, { backgroundColor: FIELD_COLORS[field] + "18" }]}>
-                <Text style={styles.fieldIcon}>{FIELD_ICONS[field]}</Text>
-              </View>
-              <Text style={[styles.fieldName, { color: FIELD_COLORS[field] }]}>{field}</Text>
-              <Text style={styles.fieldCount}>
-                {concepts.filter((c) => c.field === field).length} 个概念
-              </Text>
-            </TouchableOpacity>
-          ))}
+          {FIELDS.map((field) => {
+            const color = FIELD_COLORS[field];
+            return (
+              <TouchableOpacity
+                key={field}
+                style={styles.fieldCard}
+                onPress={() => router.push(`/fields/${field}`)}
+                activeOpacity={0.8}
+              >
+                <View style={[styles.fieldIconBg, { backgroundColor: color + "14" }]}>
+                  <Text style={styles.fieldIcon}>{FIELD_ICONS[field]}</Text>
+                </View>
+                <Text style={[styles.fieldName, { color }]}>{field}</Text>
+                <Text style={styles.fieldCount}>
+                  {concepts.filter((c) => c.field === field).length} 个概念
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </View>
 
-      {/* Navigation */}
+      {/* Navigation — Apple-style list with HarmonyOS rounding */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>我的学习</Text>
-        <View style={styles.navGrid}>
+        <View style={styles.navList}>
           {[
-            { icon: "❤️", label: "我的收藏", route: "/favorites", color: "#E17055" },
-            { icon: "📊", label: "学习记录", route: "/records", color: "#0984E3" },
-            { icon: "📝", label: "错题本", route: "/wrong-answers", color: "#FDCB6E" },
-            { icon: "⚙️", label: "设置", route: "/settings", color: "#636E72" },
-          ].map((item) => (
+            { icon: "❤️", label: "我的收藏", route: "/favorites", color: colors.error },
+            { icon: "📊", label: "学习记录", route: "/records", color: "#2D7ABF" },
+            { icon: "📝", label: "错题本", route: "/wrong-answers", color: colors.tertiary },
+            { icon: "⚙️", label: "设置", route: "/settings", color: colors.onSurfaceVariant },
+          ].map((item, i) => (
             <TouchableOpacity
               key={item.label}
-              style={styles.navCard}
+              style={[styles.navItem, i === 3 && styles.navItemLast]}
               onPress={() => router.push(item.route)}
               activeOpacity={0.7}
             >
-              <View style={[styles.navIconBg, { backgroundColor: item.color + "18" }]}>
+              <View style={[styles.navIconBg, { backgroundColor: item.color + "12" }]}>
                 <Text style={styles.navIcon}>{item.icon}</Text>
               </View>
               <Text style={styles.navLabel}>{item.label}</Text>
+              <Text style={styles.navArrow}>→</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -122,142 +127,197 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF8F0" },
-  content: { padding: 20, paddingBottom: 40 },
+  screen: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
+  content: {
+    padding: spacing.lg,
+    paddingTop: spacing.huge + spacing.lg,
+    paddingBottom: spacing.xxxl,
+  },
 
   // Hero
-  hero: { alignItems: "center", marginTop: 16, marginBottom: 28 },
-  heroDecor: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#E17055" + "18",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 10,
+  hero: {
+    marginBottom: spacing.xl,
   },
-  heroEmoji: { fontSize: 28 },
-  appName: { fontSize: 34, fontWeight: "800", color: "#E17055", letterSpacing: 2 },
-  tagline: { fontSize: 15, color: "#636E72", marginTop: 6, letterSpacing: 1 },
+  appName: {
+    ...typography.displayLarge,
+    color: colors.primary,
+    letterSpacing: 1,
+  },
+  tagline: {
+    ...typography.body,
+    color: colors.onSurfaceVariant,
+    marginTop: spacing.xs,
+  },
 
-  // Today
+  // Today's card
   todayCard: {
-    backgroundColor: "#E17055",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 12,
+    backgroundColor: colors.primary,
+    borderRadius: radius.xl,
+    padding: spacing.lg,
+    marginBottom: spacing.base,
+    ...shadows.lg,
+  },
+  todayTop: {
     flexDirection: "row",
     alignItems: "center",
-    shadowColor: "#E17055",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 6,
+    justifyContent: "space-between",
+    marginBottom: spacing.md,
   },
-  todayDecor: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: "rgba(255,255,255,0.2)",
+  todayIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.full,
+    backgroundColor: "rgba(255,255,255,0.18)",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 14,
   },
-  todayDecorText: { fontSize: 24 },
-  todayContent: { flex: 1 },
-  todayLabel: { fontSize: 12, color: "rgba(255,255,255,0.8)", fontWeight: "500", letterSpacing: 1 },
-  todayTitle: { fontSize: 20, fontWeight: "700", color: "#FFF", marginTop: 4, lineHeight: 28 },
-  todayMeta: { flexDirection: "row", alignItems: "center", marginTop: 6 },
-  todayField: { fontSize: 13, color: "rgba(255,255,255,0.85)" },
-  todayDot: { fontSize: 13, color: "rgba(255,255,255,0.5)", marginHorizontal: 6 },
-  todayLevel: { fontSize: 13, color: "rgba(255,255,255,0.85)" },
+  todayIcon: { fontSize: 22 },
+  todayMeta: { flexDirection: "row", alignItems: "center", gap: 8 },
+  todayFieldBadge: {
+    backgroundColor: "rgba(255,255,255,0.2)",
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.xs,
+  },
+  todayFieldText: {
+    ...typography.labelSmall,
+    color: colors.onPrimary,
+  },
+  todayLevel: {
+    ...typography.labelSmall,
+    color: "rgba(255,255,255,0.7)",
+  },
+  todayLabel: {
+    ...typography.labelMedium,
+    color: "rgba(255,255,255,0.7)",
+    letterSpacing: 1.5,
+    textTransform: "uppercase",
+    marginBottom: spacing.xs,
+  },
+  todayTitle: {
+    ...typography.displaySmall,
+    color: colors.onPrimary,
+    marginBottom: spacing.md,
+  },
+  todayFooter: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  todayAction: {
+    ...typography.labelLarge,
+    color: "rgba(255,255,255,0.85)",
+    marginRight: spacing.sm,
+  },
+  todayArrow: {
+    fontSize: 18,
+    color: "rgba(255,255,255,0.6)",
+  },
 
   // Continue
   continueCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 24,
+    backgroundColor: colors.surfaceContainerLow,
+    borderRadius: radius.lg,
+    padding: spacing.base,
+    marginBottom: spacing.xl,
     flexDirection: "row",
     alignItems: "center",
-    shadowColor: "#0984E3",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 3,
-    borderLeftWidth: 4,
-    borderLeftColor: "#0984E3",
   },
-  continueIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#0984E3" + "15",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
+  continueDot: {
+    width: 10,
+    height: 10,
+    borderRadius: radius.full,
+    backgroundColor: colors.secondary,
+    marginRight: spacing.md,
   },
-  continueIconText: { fontSize: 14, color: "#0984E3" },
   continueInfo: { flex: 1 },
-  continueLabel: { fontSize: 15, fontWeight: "600", color: "#2D3436" },
-  continueHint: { fontSize: 12, color: "#B2BEC3", marginTop: 2 },
-  continueArrow: { fontSize: 22, color: "#B2BEC3", fontWeight: "300" },
+  continueLabel: {
+    ...typography.titleSmall,
+    color: colors.onSurface,
+  },
+  continueHint: {
+    ...typography.bodySmall,
+    color: colors.onSurfaceVariant,
+    marginTop: 2,
+  },
+  continueArrow: {
+    fontSize: 20,
+    color: colors.onSurfaceVariant,
+  },
 
   // Sections
-  section: { marginBottom: 24 },
-  sectionTitle: { fontSize: 18, fontWeight: "700", color: "#2D3436", marginBottom: 14 },
+  section: { marginBottom: spacing.xl },
+  sectionTitle: {
+    ...typography.titleLarge,
+    color: colors.onSurface,
+    marginBottom: spacing.md,
+  },
 
-  // Fields
-  fieldGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
+  // Field grid
+  fieldGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.md,
+  },
   fieldCard: {
-    width: "48%",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 12,
+    width: "47.5%",
+    backgroundColor: colors.surfaceContainerLow,
+    borderRadius: radius.lg,
+    padding: spacing.base,
     alignItems: "center",
-    shadowColor: "#2D3436",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
   },
   fieldIconBg: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 52,
+    height: 52,
+    borderRadius: radius.full,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+    marginBottom: spacing.sm + 2,
   },
-  fieldIcon: { fontSize: 24 },
-  fieldName: { fontSize: 15, fontWeight: "700" },
-  fieldCount: { fontSize: 12, color: "#B2BEC3", marginTop: 4 },
+  fieldIcon: { fontSize: 26 },
+  fieldName: {
+    ...typography.titleSmall,
+    marginBottom: 2,
+  },
+  fieldCount: {
+    ...typography.bodySmall,
+    color: colors.onSurfaceVariant,
+  },
 
-  // Nav
-  navGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
-  navCard: {
-    width: "48%",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 12,
+  // Nav list
+  navList: {
+    backgroundColor: colors.surfaceContainerLow,
+    borderRadius: radius.lg,
+    overflow: "hidden",
+  },
+  navItem: {
     flexDirection: "row",
     alignItems: "center",
-    shadowColor: "#2D3436",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
+    padding: spacing.base,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.outlineVariant,
+  },
+  navItemLast: {
+    borderBottomWidth: 0,
   },
   navIconBg: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radius.sm + 2,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 10,
+    marginRight: spacing.md,
   },
   navIcon: { fontSize: 18 },
-  navLabel: { fontSize: 14, fontWeight: "600", color: "#2D3436" },
+  navLabel: {
+    ...typography.titleSmall,
+    color: colors.onSurface,
+    flex: 1,
+  },
+  navArrow: {
+    fontSize: 18,
+    color: colors.onSurfaceVariant,
+  },
 });

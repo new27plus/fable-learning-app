@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { colors, typography, spacing, radius } from "../theme/tokens";
 
 const LABELS = ["A", "B", "C", "D"];
 
@@ -37,7 +38,7 @@ export default function QuizOption({ label, index, selected, correct, disabled, 
       style={containerStyle}
       onPress={onPress}
       disabled={disabled}
-      activeOpacity={0.7}
+      activeOpacity={0.8}
     >
       <View style={prefixBg}>
         <Text style={prefixTextStyle}>{LABELS[index]}</Text>
@@ -53,73 +54,71 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 10,
+    backgroundColor: colors.surfaceBright,
+    borderRadius: radius.md,
+    padding: spacing.base - 2,
+    marginBottom: spacing.sm + 2,
     borderWidth: 1.5,
-    borderColor: "#E8E8E8",
+    borderColor: colors.outlineVariant,
   },
   selectedContainer: {
-    backgroundColor: "#EBF5FB",
-    borderColor: "#74B9FF",
+    backgroundColor: colors.primaryContainer,
+    borderColor: colors.primary,
   },
   correctContainer: {
-    backgroundColor: "#EAFAF1",
-    borderColor: "#00B894",
+    backgroundColor: colors.successContainer,
+    borderColor: colors.success,
   },
   wrongContainer: {
-    backgroundColor: "#FDEDEC",
-    borderColor: "#E17055",
+    backgroundColor: colors.errorContainer,
+    borderColor: colors.error,
   },
   prefixCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: "#F5F6FA",
+    width: 32,
+    height: 32,
+    borderRadius: radius.full,
+    backgroundColor: colors.surfaceContainer,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 12,
+    marginRight: spacing.md,
   },
   prefixText: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#636E72",
+    ...typography.labelLarge,
+    color: colors.onSurfaceVariant,
   },
   selectedPrefixBg: {
-    backgroundColor: "#D6EAF8",
+    backgroundColor: colors.primaryContainer,
   },
   selectedPrefixText: {
-    color: "#0984E3",
+    color: colors.primary,
   },
   correctPrefixBg: {
-    backgroundColor: "#D5F5E3",
+    backgroundColor: colors.successContainer,
   },
   correctPrefixText: {
-    color: "#00B894",
+    color: colors.success,
   },
   wrongPrefixBg: {
-    backgroundColor: "#FADBD8",
+    backgroundColor: colors.errorContainer,
   },
   wrongPrefixText: {
-    color: "#E17055",
+    color: colors.error,
   },
   label: {
     flex: 1,
-    fontSize: 15,
-    color: "#2D3436",
-    lineHeight: 22,
+    ...typography.body,
+    color: colors.onSurface,
   },
   checkIcon: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#00B894",
-    marginLeft: 8,
+    color: colors.success,
+    marginLeft: spacing.sm,
   },
   crossIcon: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#E17055",
-    marginLeft: 8,
+    color: colors.error,
+    marginLeft: spacing.sm,
   },
 });
