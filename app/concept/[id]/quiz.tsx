@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { concepts } from "../../../src/data/concepts";
 import QuizOption from "../../../src/components/QuizOption";
 import PrimaryButton from "../../../src/components/PrimaryButton";
@@ -62,6 +63,18 @@ export default function QuizScreen() {
     }
   };
 
+  const getResultIcon = () => {
+    if (score === concept.questions.length) return "trophy";
+    if (score >= concept.questions.length / 2) return "thumbs-up";
+    return "fitness";
+  };
+
+  const getResultText = () => {
+    if (score === concept.questions.length) return "满分通过，太棒了！";
+    if (score >= concept.questions.length / 2) return "不错，继续加油！";
+    return "没关系，多学几次就好了！";
+  };
+
   if (showResult) {
     return (
       <View style={styles.resultScreen}>
@@ -71,17 +84,9 @@ export default function QuizScreen() {
             <Text style={styles.scoreSlash}>/</Text>
             <Text style={styles.scoreTotal}>{concept.questions.length}</Text>
           </View>
-          <Text style={styles.resultEmoji}>
-            {score === concept.questions.length ? "🎉" : score >= concept.questions.length / 2 ? "👍" : "💪"}
-          </Text>
+          <Ionicons name={getResultIcon()} size={48} color={colors.primary} style={styles.resultIcon} />
           <Text style={styles.resultTitle}>测验完成！</Text>
-          <Text style={styles.resultDesc}>
-            {score === concept.questions.length
-              ? "满分通过，太棒了！"
-              : score >= concept.questions.length / 2
-              ? "不错，继续加油！"
-              : "没关系，多学几次就好了！"}
-          </Text>
+          <Text style={styles.resultDesc}>{getResultText()}</Text>
           <View style={styles.resultActions}>
             <PrimaryButton title="返回首页" variant="secondary" onPress={() => router.push("/")} />
             <PrimaryButton title="再看一遍概念" variant="outline" onPress={() => router.push(`/concept/${id}/explanation`)} />
@@ -139,9 +144,16 @@ export default function QuizScreen() {
       {/* Feedback */}
       {state === "answered" && (
         <View style={[styles.feedbackCard, isCorrect ? styles.feedbackCorrect : styles.feedbackWrong]}>
-          <Text style={isCorrect ? styles.correctTitle : styles.wrongTitle}>
-            {isCorrect ? "✅ 回答正确！" : "❌ 回答错误"}
-          </Text>
+          <View style={styles.feedbackHeader}>
+            <Ionicons
+              name={isCorrect ? "checkmark-circle" : "close-circle"}
+              size={20}
+              color={isCorrect ? colors.success : colors.error}
+            />
+            <Text style={isCorrect ? styles.correctTitle : styles.wrongTitle}>
+              {isCorrect ? "回答正确！" : "回答错误"}
+            </Text>
+          </View>
           <Text style={styles.explanation}>{question.explanation}</Text>
           <PrimaryButton
             title={currentIndex < concept.questions.length - 1 ? "下一题" : "查看结果"}
@@ -226,15 +238,19 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: colors.error,
   },
+  feedbackHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    marginBottom: spacing.sm + 2,
+  },
   correctTitle: {
     ...typography.titleMedium,
     color: colors.success,
-    marginBottom: spacing.sm + 2,
   },
   wrongTitle: {
     ...typography.titleMedium,
     color: colors.error,
-    marginBottom: spacing.sm + 2,
   },
   explanation: {
     ...typography.body,
@@ -278,7 +294,9 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: colors.onSurfaceVariant,
   },
-  resultEmoji: { fontSize: 48, marginBottom: spacing.md },
+  resultIcon: {
+    marginBottom: spacing.md,
+  },
   resultTitle: {
     ...typography.headline,
     color: colors.onSurface,

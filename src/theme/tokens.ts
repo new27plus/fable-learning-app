@@ -28,6 +28,11 @@ export const colors = {
   onTertiary: "#FFFFFF",
   onTertiaryContainer: "#1D1535",
 
+  // Accent — warm gold
+  accent: "#C4953A",
+  accentContainer: "#FBF3E0",
+  onAccentContainer: "#3D2800",
+
   // Surface (HarmonyOS warm whites)
   surface: "#FEFCF9",
   surfaceDim: "#F5F0EA",
@@ -47,6 +52,10 @@ export const colors = {
   // Success
   success: "#2E8B57",
   successContainer: "#E6F5ED",
+
+  // Info
+  info: "#2D7ABF",
+  infoContainer: "#E3F0FA",
 
   // Outline
   outline: "#C8C2B8",

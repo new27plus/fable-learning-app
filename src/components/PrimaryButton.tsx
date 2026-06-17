@@ -1,5 +1,6 @@
-import React from "react";
-import { Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useRef } from "react";
+import { Text, Animated, TouchableOpacity, StyleSheet, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { colors, typography, spacing, radius, shadows } from "../theme/tokens";
 
 interface Props {
@@ -7,9 +8,30 @@ interface Props {
   onPress: () => void;
   variant?: "primary" | "secondary" | "outline";
   disabled?: boolean;
+  icon?: keyof typeof Ionicons.glyphMap;
 }
 
-export default function PrimaryButton({ title, onPress, variant = "primary", disabled }: Props) {
+export default function PrimaryButton({ title, onPress, variant = "primary", disabled, icon }: Props) {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.96,
+      useNativeDriver: true,
+      speed: 50,
+      bounciness: 4,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 50,
+      bounciness: 4,
+    }).start();
+  };
+
   const buttonStyle = [
     styles.button,
     variant === "primary" && styles.primary,
@@ -26,14 +48,31 @@ export default function PrimaryButton({ title, onPress, variant = "primary", dis
     disabled && styles.disabledText,
   ];
 
+  const iconColor = variant === "primary" ? colors.onPrimary
+    : variant === "outline" ? colors.primary
+    : colors.onSurface;
+
   return (
     <TouchableOpacity
-      style={buttonStyle}
       onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       disabled={disabled}
-      activeOpacity={0.8}
+      activeOpacity={1}
     >
-      <Text style={textStyle}>{title}</Text>
+      <Animated.View
+        style={[
+          buttonStyle,
+          {
+            transform: [{ scale: scaleAnim }],
+          },
+        ]}
+      >
+        <View style={styles.content}>
+          <Text style={textStyle}>{title}</Text>
+          {icon && <Ionicons name={icon} size={18} color={iconColor} style={styles.icon} />}
+        </View>
+      </Animated.View>
     </TouchableOpacity>
   );
 }
@@ -46,6 +85,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: spacing.sm,
+  },
+  content: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
   },
   primary: {
     backgroundColor: colors.primary,
@@ -76,5 +120,8 @@ const styles = StyleSheet.create({
   },
   disabledText: {
     opacity: 0.7,
+  },
+  icon: {
+    marginLeft: spacing.xs,
   },
 });

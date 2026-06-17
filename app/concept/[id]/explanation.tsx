@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { concepts } from "../../../src/data/concepts";
 import PrimaryButton from "../../../src/components/PrimaryButton";
 import MetaphorTable from "../../../src/components/MetaphorTable";
 import { initDatabase, toggleFavorite, isFavorite } from "../../../src/lib/db";
 import { getFieldColor } from "../../../src/utils/concept";
 import { colors, typography, spacing, radius, shadows } from "../../../src/theme/tokens";
+
+const SECTIONS = [
+  { key: "plain", icon: "chatbubble-ellipses" as const, title: "大白话解释", color: colors.secondary },
+  { key: "formal", icon: "book" as const, title: "正式定义", color: colors.tertiary },
+  { key: "importance", icon: "star" as const, title: "为什么重要", color: colors.accent },
+  { key: "metaphor", icon: "git-compare" as const, title: "隐喻对应表", color: colors.primary },
+  { key: "boundary", icon: "warning" as const, title: "类比边界", color: colors.accent },
+  { key: "example", icon: "document-text" as const, title: "现实例子", color: colors.success },
+];
 
 export default function ExplanationScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -53,36 +63,51 @@ export default function ExplanationScreen() {
 
       {/* Section: Plain explanation */}
       <View style={styles.sectionCard}>
-        <View style={[styles.sectionAccent, { backgroundColor: colors.secondary }]} />
-        <Text style={styles.sectionTitle}>💡 大白话解释</Text>
+        <View style={[styles.sectionAccent, { backgroundColor: SECTIONS[0].color }]} />
+        <View style={styles.sectionHeader}>
+          <Ionicons name={SECTIONS[0].icon} size={18} color={SECTIONS[0].color} />
+          <Text style={styles.sectionTitle}>{SECTIONS[0].title}</Text>
+        </View>
         <Text style={styles.bodyText}>{concept.plainExplanation}</Text>
       </View>
 
       {/* Section: Formal definition */}
       <View style={styles.sectionCard}>
-        <View style={[styles.sectionAccent, { backgroundColor: colors.tertiary }]} />
-        <Text style={styles.sectionTitle}>📘 正式定义</Text>
+        <View style={[styles.sectionAccent, { backgroundColor: SECTIONS[1].color }]} />
+        <View style={styles.sectionHeader}>
+          <Ionicons name={SECTIONS[1].icon} size={18} color={SECTIONS[1].color} />
+          <Text style={styles.sectionTitle}>{SECTIONS[1].title}</Text>
+        </View>
         <Text style={styles.bodyText}>{concept.formalDefinition}</Text>
       </View>
 
       {/* Section: Importance */}
       <View style={styles.sectionCard}>
-        <View style={[styles.sectionAccent, { backgroundColor: "#C4953A" }]} />
-        <Text style={styles.sectionTitle}>⭐ 为什么重要</Text>
+        <View style={[styles.sectionAccent, { backgroundColor: SECTIONS[2].color }]} />
+        <View style={styles.sectionHeader}>
+          <Ionicons name={SECTIONS[2].icon} size={18} color={SECTIONS[2].color} />
+          <Text style={styles.sectionTitle}>{SECTIONS[2].title}</Text>
+        </View>
         <Text style={styles.bodyText}>{concept.importance}</Text>
       </View>
 
       {/* Section: Metaphor table */}
       <View style={styles.sectionCard}>
-        <View style={[styles.sectionAccent, { backgroundColor: colors.primary }]} />
-        <Text style={styles.sectionTitle}>🔗 隐喻对应表</Text>
+        <View style={[styles.sectionAccent, { backgroundColor: SECTIONS[3].color }]} />
+        <View style={styles.sectionHeader}>
+          <Ionicons name={SECTIONS[3].icon} size={18} color={SECTIONS[3].color} />
+          <Text style={styles.sectionTitle}>{SECTIONS[3].title}</Text>
+        </View>
         <MetaphorTable data={concept.metaphorMap} />
       </View>
 
       {/* Section: Boundaries */}
       <View style={styles.sectionCard}>
-        <View style={[styles.sectionAccent, { backgroundColor: "#C4953A" }]} />
-        <Text style={styles.sectionTitle}>⚠️ 类比边界</Text>
+        <View style={[styles.sectionAccent, { backgroundColor: SECTIONS[4].color }]} />
+        <View style={styles.sectionHeader}>
+          <Ionicons name={SECTIONS[4].icon} size={18} color={SECTIONS[4].color} />
+          <Text style={styles.sectionTitle}>{SECTIONS[4].title}</Text>
+        </View>
         {concept.boundaries.map((b, i) => (
           <View key={i} style={styles.bulletRow}>
             <View style={styles.bulletDot} />
@@ -93,8 +118,11 @@ export default function ExplanationScreen() {
 
       {/* Section: Examples */}
       <View style={styles.sectionCard}>
-        <View style={[styles.sectionAccent, { backgroundColor: colors.success }]} />
-        <Text style={styles.sectionTitle}>📌 现实例子</Text>
+        <View style={[styles.sectionAccent, { backgroundColor: SECTIONS[5].color }]} />
+        <View style={styles.sectionHeader}>
+          <Ionicons name={SECTIONS[5].icon} size={18} color={SECTIONS[5].color} />
+          <Text style={styles.sectionTitle}>{SECTIONS[5].title}</Text>
+        </View>
         {concept.examples.map((ex, i) => (
           <View key={i} style={styles.exampleCard}>
             <View style={styles.exampleHeader}>
@@ -123,13 +151,15 @@ export default function ExplanationScreen() {
       {/* Actions */}
       <View style={styles.actions}>
         <PrimaryButton
-          title={fav ? "❤️ 已收藏" : "🤍 收藏此概念"}
+          title={fav ? "已收藏" : "收藏此概念"}
           variant={fav ? "secondary" : "outline"}
           onPress={handleToggleFavorite}
+          icon={fav ? "heart" : "heart-outline"}
         />
         <PrimaryButton
           title="开始测试"
           onPress={() => router.push(`/concept/${id}/quiz`)}
+          icon="arrow-forward"
         />
       </View>
     </ScrollView>
@@ -205,10 +235,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: radius.lg,
     borderBottomLeftRadius: radius.lg,
   },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
   sectionTitle: {
     ...typography.titleMedium,
     color: colors.onSurface,
-    marginBottom: spacing.md,
   },
   bodyText: {
     ...typography.body,

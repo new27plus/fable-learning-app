@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { FIELDS, FIELD_ICONS, FIELD_COLORS } from "../../src/utils/concept";
 import { concepts } from "../../src/data/concepts";
 import { colors, typography, spacing, radius, shadows } from "../../src/theme/tokens";
@@ -20,7 +21,7 @@ export default function FieldsIndex() {
             key={field}
             style={styles.card}
             onPress={() => router.push(`/fields/${field}`)}
-            activeOpacity={0.8}
+            activeOpacity={0.85}
           >
             <View style={[styles.iconBg, { backgroundColor: fieldColor + "14" }]}>
               <Text style={styles.icon}>{FIELD_ICONS[field]}</Text>
@@ -30,7 +31,7 @@ export default function FieldsIndex() {
               <Text style={styles.count}>{count} 个概念</Text>
             </View>
             <View style={[styles.arrowBg, { backgroundColor: fieldColor + "10" }]}>
-              <Text style={[styles.arrow, { color: fieldColor }]}>→</Text>
+              <Ionicons name="chevron-forward" size={18} color={fieldColor} />
             </View>
           </TouchableOpacity>
         );
@@ -91,5 +92,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  arrow: { fontSize: 18 },
 });

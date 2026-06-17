@@ -1,6 +1,13 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { colors, typography, spacing, radius, shadows } from "../src/theme/tokens";
+
+const PLACEHOLDER_ITEMS = [
+  { icon: "sparkles" as const, label: "AI 生成模式" },
+  { icon: "key" as const, label: "用户自带 API Key" },
+  { icon: "cloud" as const, label: "云端同步" },
+];
 
 export default function SettingsScreen() {
   return (
@@ -8,7 +15,7 @@ export default function SettingsScreen() {
       {/* App info */}
       <View style={styles.logoSection}>
         <View style={styles.logoBg}>
-          <Text style={styles.logoEmoji}>📖</Text>
+          <Ionicons name="book" size={32} color={colors.primary} />
         </View>
         <Text style={styles.appName}>寓言学堂</Text>
         <Text style={styles.appDesc}>用故事理解复杂概念</Text>
@@ -19,7 +26,7 @@ export default function SettingsScreen() {
         <View style={styles.row}>
           <Text style={styles.label}>当前版本</Text>
           <View style={styles.valueTag}>
-            <Text style={styles.valueText}>MVP 离线版</Text>
+            <Text style={styles.valueText}>v1.2</Text>
           </View>
         </View>
         <View style={styles.divider} />
@@ -39,15 +46,11 @@ export default function SettingsScreen() {
       {/* Placeholder card */}
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>即将推出</Text>
-        {[
-          { icon: "🤖", label: "AI 生成模式" },
-          { icon: "🔑", label: "用户自带 API Key" },
-          { icon: "☁️", label: "云端同步" },
-        ].map((item, i) => (
+        {PLACEHOLDER_ITEMS.map((item, i) => (
           <View key={i}>
             {i > 0 && <View style={styles.divider} />}
             <View style={styles.placeholderRow}>
-              <Text style={styles.placeholderIcon}>{item.icon}</Text>
+              <Ionicons name={item.icon} size={18} color={colors.onSurfaceVariant} />
               <Text style={styles.placeholderText}>{item.label}</Text>
               <View style={styles.comingSoonTag}>
                 <Text style={styles.comingSoonText}>即将推出</Text>
@@ -57,7 +60,7 @@ export default function SettingsScreen() {
         ))}
       </View>
 
-      <Text style={styles.footer}>寓言学堂 · V1.1</Text>
+      <Text style={styles.footer}>寓言学堂 · v1.2</Text>
     </View>
   );
 }
@@ -84,7 +87,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: spacing.sm + 2,
   },
-  logoEmoji: { fontSize: 32 },
   appName: {
     ...typography.headline,
     color: colors.primary,
@@ -140,8 +142,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: spacing.sm + 2,
+    gap: spacing.sm + 2,
   },
-  placeholderIcon: { fontSize: 18, marginRight: spacing.sm + 2 },
   placeholderText: {
     ...typography.body,
     color: colors.onSurfaceVariant,

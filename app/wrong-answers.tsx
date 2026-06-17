@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useFocusEffect } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { initDatabase, getWrongAnswers } from "../src/lib/db";
 import { concepts } from "../src/data/concepts";
 import { getFieldColor } from "../src/utils/concept";
@@ -21,7 +22,7 @@ export default function WrongAnswersScreen() {
     return (
       <View style={styles.empty}>
         <View style={styles.emptyIconBg}>
-          <Text style={styles.emptyIcon}>📝</Text>
+          <Ionicons name="document-text" size={32} color={colors.tertiary} />
         </View>
         <Text style={styles.emptyText}>还没有错题</Text>
         <Text style={styles.emptyHint}>做测验时答错的题会出现在这里</Text>
@@ -61,7 +62,10 @@ export default function WrongAnswersScreen() {
                 </View>
               </View>
               <View style={styles.explanationBox}>
-                <Text style={styles.explanationLabel}>💡 解析</Text>
+                <View style={styles.explanationHeader}>
+                  <Ionicons name="bulb" size={16} color={colors.accent} />
+                  <Text style={styles.explanationLabel}>解析</Text>
+                </View>
                 <Text style={styles.explanation}>{item.explanation}</Text>
               </View>
             </View>
@@ -145,10 +149,15 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.md,
   },
+  explanationHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+  },
   explanationLabel: {
     ...typography.labelMedium,
     color: colors.onSurfaceVariant,
-    marginBottom: spacing.sm,
   },
   explanation: {
     ...typography.bodySmall,
@@ -170,7 +179,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: spacing.base,
   },
-  emptyIcon: { fontSize: 32 },
   emptyText: {
     ...typography.titleMedium,
     color: colors.onSurface,

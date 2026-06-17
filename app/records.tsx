@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useFocusEffect } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { initDatabase, getLearningRecords } from "../src/lib/db";
 import { concepts } from "../src/data/concepts";
 import { getFieldColor } from "../src/utils/concept";
@@ -21,7 +22,7 @@ export default function RecordsScreen() {
     return (
       <View style={styles.empty}>
         <View style={styles.emptyIconBg}>
-          <Text style={styles.emptyIcon}>📊</Text>
+          <Ionicons name="stats-chart" size={32} color={colors.info} />
         </View>
         <Text style={styles.emptyText}>还没有学习记录</Text>
         <Text style={styles.emptyHint}>完成测验后会自动记录</Text>
@@ -133,12 +134,11 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: radius.full,
-    backgroundColor: colors.secondaryContainer,
+    backgroundColor: colors.infoContainer,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.base,
   },
-  emptyIcon: { fontSize: 32 },
   emptyText: {
     ...typography.titleMedium,
     color: colors.onSurface,

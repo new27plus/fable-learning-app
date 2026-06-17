@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { concepts } from "../src/data/concepts";
 import { FIELDS, FIELD_ICONS, FIELD_COLORS } from "../src/utils/concept";
 import { initDatabase, getLearningRecords } from "../src/lib/db";
 import { colors, typography, spacing, radius, shadows } from "../src/theme/tokens";
 import type { Field } from "../src/types/concept";
+
+const NAV_ITEMS = [
+  { icon: "heart" as const, label: "我的收藏", route: "/favorites", color: colors.error },
+  { icon: "stats-chart" as const, label: "学习记录", route: "/records", color: colors.info },
+  { icon: "document-text" as const, label: "错题本", route: "/wrong-answers", color: colors.tertiary },
+  { icon: "settings-sharp" as const, label: "设置", route: "/settings", color: colors.onSurfaceVariant },
+];
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -24,17 +32,17 @@ export default function HomeScreen() {
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      {/* Hero — Apple-style minimal header */}
+      {/* Hero */}
       <View style={styles.hero}>
         <Text style={styles.appName}>寓言学堂</Text>
         <Text style={styles.tagline}>用故事理解复杂概念</Text>
       </View>
 
-      {/* Today's recommendation — Material 3 elevated card */}
+      {/* Today's recommendation */}
       <TouchableOpacity
         style={styles.todayCard}
         onPress={() => router.push(`/concept/${todayConcept.id}/story`)}
-        activeOpacity={0.85}
+        activeOpacity={0.9}
       >
         <View style={styles.todayTop}>
           <View style={styles.todayIconWrap}>
@@ -51,27 +59,27 @@ export default function HomeScreen() {
         <Text style={styles.todayTitle}>{todayConcept.storyTitle}</Text>
         <View style={styles.todayFooter}>
           <Text style={styles.todayAction}>开始阅读</Text>
-          <Text style={styles.todayArrow}>→</Text>
+          <Ionicons name="arrow-forward" size={16} color="rgba(255,255,255,0.7)" />
         </View>
       </TouchableOpacity>
 
-      {/* Continue learning — HarmonyOS flat card */}
+      {/* Continue learning */}
       {lastConceptId && (
         <TouchableOpacity
           style={styles.continueCard}
           onPress={() => router.push(`/concept/${lastConceptId}/story`)}
-          activeOpacity={0.85}
+          activeOpacity={0.8}
         >
           <View style={styles.continueDot} />
           <View style={styles.continueInfo}>
             <Text style={styles.continueLabel}>继续学习</Text>
             <Text style={styles.continueHint}>上次学到的概念</Text>
           </View>
-          <Text style={styles.continueArrow}>→</Text>
+          <Ionicons name="chevron-forward" size={18} color={colors.onSurfaceVariant} />
         </TouchableOpacity>
       )}
 
-      {/* Fields — Material 3 grid with HarmonyOS softness */}
+      {/* Fields */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>学科探索</Text>
         <View style={styles.fieldGrid}>
@@ -97,27 +105,22 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Navigation — Apple-style list with HarmonyOS rounding */}
+      {/* Navigation */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>我的学习</Text>
         <View style={styles.navList}>
-          {[
-            { icon: "❤️", label: "我的收藏", route: "/favorites", color: colors.error },
-            { icon: "📊", label: "学习记录", route: "/records", color: "#2D7ABF" },
-            { icon: "📝", label: "错题本", route: "/wrong-answers", color: colors.tertiary },
-            { icon: "⚙️", label: "设置", route: "/settings", color: colors.onSurfaceVariant },
-          ].map((item, i) => (
+          {NAV_ITEMS.map((item, i) => (
             <TouchableOpacity
               key={item.label}
-              style={[styles.navItem, i === 3 && styles.navItemLast]}
+              style={[styles.navItem, i === NAV_ITEMS.length - 1 && styles.navItemLast]}
               onPress={() => router.push(item.route)}
               activeOpacity={0.7}
             >
               <View style={[styles.navIconBg, { backgroundColor: item.color + "12" }]}>
-                <Text style={styles.navIcon}>{item.icon}</Text>
+                <Ionicons name={item.icon} size={18} color={item.color} />
               </View>
               <Text style={styles.navLabel}>{item.label}</Text>
-              <Text style={styles.navArrow}>→</Text>
+              <Ionicons name="chevron-forward" size={16} color={colors.onSurfaceVariant} />
             </TouchableOpacity>
           ))}
         </View>
@@ -133,7 +136,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.lg,
-    paddingTop: spacing.huge + spacing.lg,
+    paddingTop: spacing.xxxl,
     paddingBottom: spacing.xxxl,
   },
 
@@ -205,15 +208,11 @@ const styles = StyleSheet.create({
   todayFooter: {
     flexDirection: "row",
     alignItems: "center",
+    gap: spacing.xs,
   },
   todayAction: {
     ...typography.labelLarge,
     color: "rgba(255,255,255,0.85)",
-    marginRight: spacing.sm,
-  },
-  todayArrow: {
-    fontSize: 18,
-    color: "rgba(255,255,255,0.6)",
   },
 
   // Continue
@@ -241,10 +240,6 @@ const styles = StyleSheet.create({
     ...typography.bodySmall,
     color: colors.onSurfaceVariant,
     marginTop: 2,
-  },
-  continueArrow: {
-    fontSize: 20,
-    color: colors.onSurfaceVariant,
   },
 
   // Sections
@@ -310,14 +305,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: spacing.md,
   },
-  navIcon: { fontSize: 18 },
   navLabel: {
     ...typography.titleSmall,
     color: colors.onSurface,
     flex: 1,
-  },
-  navArrow: {
-    fontSize: 18,
-    color: colors.onSurfaceVariant,
   },
 });

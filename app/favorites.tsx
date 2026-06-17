@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { initDatabase, getFavorites } from "../src/lib/db";
 import { concepts } from "../src/data/concepts";
 import ConceptCard from "../src/components/ConceptCard";
@@ -24,7 +25,7 @@ export default function FavoritesScreen() {
     return (
       <View style={styles.empty}>
         <View style={styles.emptyIconBg}>
-          <Text style={styles.emptyIcon}>❤️</Text>
+          <Ionicons name="heart-outline" size={32} color={colors.error} />
         </View>
         <Text style={styles.emptyText}>还没有收藏任何概念</Text>
         <Text style={styles.emptyHint}>在概念解释页点击收藏按钮即可</Text>
@@ -73,7 +74,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: spacing.base,
   },
-  emptyIcon: { fontSize: 32 },
   emptyText: {
     ...typography.titleMedium,
     color: colors.onSurface,

@@ -1,5 +1,6 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useRef, useEffect } from "react";
+import { View, Text, Animated, TouchableOpacity, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { colors, typography, spacing, radius } from "../theme/tokens";
 
 const LABELS = ["A", "B", "C", "D"];
@@ -14,6 +15,37 @@ interface Props {
 }
 
 export default function QuizOption({ label, index, selected, correct, disabled, onPress }: Props) {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const borderAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (selected) {
+      Animated.sequence([
+        Animated.timing(scaleAnim, {
+          toValue: 0.98,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          useNativeDriver: true,
+          speed: 50,
+          bounciness: 6,
+        }),
+      ]).start();
+    }
+  }, [selected, scaleAnim]);
+
+  useEffect(() => {
+    if (correct !== null) {
+      Animated.timing(borderAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [correct, borderAnim]);
+
   let containerStyle: object[] = [styles.container];
   let prefixBg: object[] = [styles.prefixCircle];
   let prefixTextStyle: object[] = [styles.prefixText];
@@ -35,17 +67,29 @@ export default function QuizOption({ label, index, selected, correct, disabled, 
 
   return (
     <TouchableOpacity
-      style={containerStyle}
       onPress={onPress}
       disabled={disabled}
-      activeOpacity={0.8}
+      activeOpacity={1}
     >
-      <View style={prefixBg}>
-        <Text style={prefixTextStyle}>{LABELS[index]}</Text>
-      </View>
-      <Text style={labelTextStyle}>{label}</Text>
-      {correct === true && <Text style={styles.checkIcon}>✓</Text>}
-      {correct === false && selected && <Text style={styles.crossIcon}>✗</Text>}
+      <Animated.View
+        style={[
+          containerStyle,
+          {
+            transform: [{ scale: scaleAnim }],
+          },
+        ]}
+      >
+        <View style={prefixBg}>
+          <Text style={prefixTextStyle}>{LABELS[index]}</Text>
+        </View>
+        <Text style={labelTextStyle}>{label}</Text>
+        {correct === true && (
+          <Ionicons name="checkmark-circle" size={20} color={colors.success} />
+        )}
+        {correct === false && selected && (
+          <Ionicons name="close-circle" size={20} color={colors.error} />
+        )}
+      </Animated.View>
     </TouchableOpacity>
   );
 }
@@ -108,17 +152,5 @@ const styles = StyleSheet.create({
     flex: 1,
     ...typography.body,
     color: colors.onSurface,
-  },
-  checkIcon: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.success,
-    marginLeft: spacing.sm,
-  },
-  crossIcon: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.error,
-    marginLeft: spacing.sm,
   },
 });
