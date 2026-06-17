@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { View, Text, ScrollView, StyleSheet, Platform } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { concepts } from "../../../src/data/concepts";
@@ -8,6 +8,8 @@ import MetaphorTable from "../../../src/components/MetaphorTable";
 import { initDatabase, toggleFavorite, isFavorite } from "../../../src/lib/db";
 import { getFieldColor } from "../../../src/utils/concept";
 import { colors, typography, spacing, radius, shadows } from "../../../src/theme/tokens";
+
+const isWeb = Platform.OS === "web";
 
 const SECTIONS = [
   { key: "plain", icon: "chatbubble-ellipses" as const, title: "大白话解释", color: colors.secondary },
@@ -25,9 +27,11 @@ export default function ExplanationScreen() {
   const [fav, setFav] = useState(false);
 
   useEffect(() => {
-    initDatabase();
-    if (id) {
-      setFav(isFavorite(id));
+    if (!isWeb) {
+      initDatabase();
+      if (id) {
+        setFav(isFavorite(id));
+      }
     }
   }, [id]);
 
@@ -42,8 +46,10 @@ export default function ExplanationScreen() {
   const fieldColor = getFieldColor(concept.field);
 
   const handleToggleFavorite = () => {
-    const result = toggleFavorite(concept.id);
-    setFav(result);
+    if (!isWeb) {
+      const result = toggleFavorite(concept.id);
+      setFav(result);
+    }
   };
 
   return (
@@ -150,12 +156,14 @@ export default function ExplanationScreen() {
 
       {/* Actions */}
       <View style={styles.actions}>
-        <PrimaryButton
-          title={fav ? "已收藏" : "收藏此概念"}
-          variant={fav ? "secondary" : "outline"}
-          onPress={handleToggleFavorite}
-          icon={fav ? "heart" : "heart-outline"}
-        />
+        {!isWeb && (
+          <PrimaryButton
+            title={fav ? "已收藏" : "收藏此概念"}
+            variant={fav ? "secondary" : "outline"}
+            onPress={handleToggleFavorite}
+            icon={fav ? "heart" : "heart-outline"}
+          />
+        )}
         <PrimaryButton
           title="开始测试"
           onPress={() => router.push(`/concept/${id}/quiz`)}
@@ -174,6 +182,9 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.base,
     paddingBottom: spacing.xxxl,
+    maxWidth: 700,
+    alignSelf: "center",
+    width: "100%",
   },
   center: {
     flex: 1,

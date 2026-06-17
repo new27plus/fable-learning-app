@@ -1,19 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Linking } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { concepts } from "../src/data/concepts";
 import { FIELDS, FIELD_ICONS, FIELD_COLORS } from "../src/utils/concept";
+import { initDatabase, getLearningRecords } from "../src/lib/db";
 import { colors, typography, spacing, radius, shadows } from "../src/theme/tokens";
 import type { Field } from "../src/types/concept";
+
+const NAV_ITEMS = [
+  { icon: "heart" as const, label: "我的收藏", route: "/favorites", color: colors.error },
+  { icon: "stats-chart" as const, label: "学习记录", route: "/records", color: colors.info },
+  { icon: "document-text" as const, label: "错题本", route: "/wrong-answers", color: colors.tertiary },
+  { icon: "settings-sharp" as const, label: "设置", route: "/settings", color: colors.onSurfaceVariant },
+];
 
 export default function HomeScreen() {
   const router = useRouter();
   const [todayConcept, setTodayConcept] = useState(concepts[0]);
+  const [lastConceptId, setLastConceptId] = useState<string | null>(null);
 
   useEffect(() => {
+    initDatabase();
     const dayIndex = new Date().getDate() % concepts.length;
     setTodayConcept(concepts[dayIndex]);
+    const records = getLearningRecords();
+    if (records.length > 0) {
+      setLastConceptId(records[0].concept_id);
+    }
   }, []);
 
   return (
@@ -22,9 +36,6 @@ export default function HomeScreen() {
       <View style={styles.hero}>
         <Text style={styles.appName}>寓言学堂</Text>
         <Text style={styles.tagline}>用故事理解复杂概念</Text>
-        <Text style={styles.description}>
-          通过寓言故事学习经济学、心理学、管理学、计算机科学、哲学、金融学等领域的抽象概念
-        </Text>
       </View>
 
       {/* Today's recommendation */}
@@ -52,23 +63,21 @@ export default function HomeScreen() {
         </View>
       </TouchableOpacity>
 
-      {/* Stats */}
-      <View style={styles.statsRow}>
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>{concepts.length}</Text>
-          <Text style={styles.statLabel}>概念</Text>
-        </View>
-        <View style={styles.statDivider} />
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>{FIELDS.length}</Text>
-          <Text style={styles.statLabel}>学科</Text>
-        </View>
-        <View style={styles.statDivider} />
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>{concepts.length * 3}</Text>
-          <Text style={styles.statLabel}>测验题</Text>
-        </View>
-      </View>
+      {/* Continue learning */}
+      {lastConceptId && (
+        <TouchableOpacity
+          style={styles.continueCard}
+          onPress={() => router.push(`/concept/${lastConceptId}/story`)}
+          activeOpacity={0.8}
+        >
+          <View style={styles.continueDot} />
+          <View style={styles.continueInfo}>
+            <Text style={styles.continueLabel}>继续学习</Text>
+            <Text style={styles.continueHint}>上次学到的概念</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={colors.onSurfaceVariant} />
+        </TouchableOpacity>
+      )}
 
       {/* Fields */}
       <View style={styles.section}>
@@ -76,7 +85,6 @@ export default function HomeScreen() {
         <View style={styles.fieldGrid}>
           {FIELDS.map((field) => {
             const color = FIELD_COLORS[field];
-            const count = concepts.filter((c) => c.field === field).length;
             return (
               <TouchableOpacity
                 key={field}
@@ -88,44 +96,34 @@ export default function HomeScreen() {
                   <Text style={styles.fieldIcon}>{FIELD_ICONS[field]}</Text>
                 </View>
                 <Text style={[styles.fieldName, { color }]}>{field}</Text>
-                <Text style={styles.fieldCount}>{count} 个概念</Text>
+                <Text style={styles.fieldCount}>
+                  {concepts.filter((c) => c.field === field).length} 个概念
+                </Text>
               </TouchableOpacity>
             );
           })}
         </View>
       </View>
 
-      {/* About section */}
+      {/* Navigation */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>关于寓言学堂</Text>
-        <View style={styles.aboutCard}>
-          <Text style={styles.aboutText}>
-            寓言学堂是一个完全离线的学习应用，通过生动的寓言故事帮助你理解抽象的概念。
-            每个概念都包含故事、解释、隐喻映射、边界说明、现实案例和知识测验。
-          </Text>
-          <View style={styles.aboutFeatures}>
-            <View style={styles.featureItem}>
-              <Ionicons name="book-outline" size={20} color={colors.primary} />
-              <Text style={styles.featureText}>寓言故事</Text>
-            </View>
-            <View style={styles.featureItem}>
-              <Ionicons name="git-compare-outline" size={20} color={colors.secondary} />
-              <Text style={styles.featureText}>隐喻映射</Text>
-            </View>
-            <View style={styles.featureItem}>
-              <Ionicons name="school-outline" size={20} color={colors.tertiary} />
-              <Text style={styles.featureText}>知识测验</Text>
-            </View>
-          </View>
+        <Text style={styles.sectionTitle}>我的学习</Text>
+        <View style={styles.navList}>
+          {NAV_ITEMS.map((item, i) => (
+            <TouchableOpacity
+              key={item.label}
+              style={[styles.navItem, i === NAV_ITEMS.length - 1 && styles.navItemLast]}
+              onPress={() => router.push(item.route)}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.navIconBg, { backgroundColor: item.color + "12" }]}>
+                <Ionicons name={item.icon} size={18} color={item.color} />
+              </View>
+              <Text style={styles.navLabel}>{item.label}</Text>
+              <Ionicons name="chevron-forward" size={16} color={colors.onSurfaceVariant} />
+            </TouchableOpacity>
+          ))}
         </View>
-      </View>
-
-      {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>寓言学堂 · v1.5</Text>
-        <TouchableOpacity onPress={() => Linking.openURL("https://github.com/new27plus/fable-learning-app")}>
-          <Text style={styles.footerLink}>GitHub 开源</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -140,9 +138,6 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     paddingTop: spacing.xxxl,
     paddingBottom: spacing.xxxl,
-    maxWidth: 800,
-    alignSelf: "center",
-    width: "100%",
   },
 
   // Hero
@@ -155,45 +150,9 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   tagline: {
-    ...typography.headline,
-    color: colors.onSurface,
-    marginTop: spacing.sm,
-  },
-  description: {
     ...typography.body,
     color: colors.onSurfaceVariant,
-    marginTop: spacing.md,
-    lineHeight: 24,
-  },
-
-  // Stats
-  statsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.surfaceContainerLow,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    marginBottom: spacing.xl,
-    gap: spacing.xl,
-  },
-  statItem: {
-    alignItems: "center",
-  },
-  statNumber: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: colors.primary,
-  },
-  statLabel: {
-    ...typography.bodySmall,
-    color: colors.onSurfaceVariant,
     marginTop: spacing.xs,
-  },
-  statDivider: {
-    width: 1,
-    height: 40,
-    backgroundColor: colors.outlineVariant,
   },
 
   // Today's card
@@ -201,7 +160,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: radius.xl,
     padding: spacing.lg,
-    marginBottom: spacing.xl,
+    marginBottom: spacing.base,
     ...shadows.lg,
   },
   todayTop: {
@@ -256,6 +215,33 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.85)",
   },
 
+  // Continue
+  continueCard: {
+    backgroundColor: colors.surfaceContainerLow,
+    borderRadius: radius.lg,
+    padding: spacing.base,
+    marginBottom: spacing.xl,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  continueDot: {
+    width: 10,
+    height: 10,
+    borderRadius: radius.full,
+    backgroundColor: colors.secondary,
+    marginRight: spacing.md,
+  },
+  continueInfo: { flex: 1 },
+  continueLabel: {
+    ...typography.titleSmall,
+    color: colors.onSurface,
+  },
+  continueHint: {
+    ...typography.bodySmall,
+    color: colors.onSurfaceVariant,
+    marginTop: 2,
+  },
+
   // Sections
   section: { marginBottom: spacing.xl },
   sectionTitle: {
@@ -295,45 +281,33 @@ const styles = StyleSheet.create({
     color: colors.onSurfaceVariant,
   },
 
-  // About
-  aboutCard: {
+  // Nav list
+  navList: {
     backgroundColor: colors.surfaceContainerLow,
     borderRadius: radius.lg,
-    padding: spacing.lg,
+    overflow: "hidden",
   },
-  aboutText: {
-    ...typography.body,
-    color: colors.onSurface,
-    lineHeight: 24,
-    marginBottom: spacing.lg,
-  },
-  aboutFeatures: {
+  navItem: {
     flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  featureItem: {
     alignItems: "center",
-    gap: spacing.sm,
+    padding: spacing.base,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.outlineVariant,
   },
-  featureText: {
-    ...typography.labelMedium,
-    color: colors.onSurfaceVariant,
+  navItemLast: {
+    borderBottomWidth: 0,
   },
-
-  // Footer
-  footer: {
+  navIconBg: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.sm + 2,
     alignItems: "center",
-    paddingTop: spacing.xl,
-    borderTopWidth: 1,
-    borderTopColor: colors.outlineVariant,
-    gap: spacing.sm,
+    justifyContent: "center",
+    marginRight: spacing.md,
   },
-  footerText: {
-    ...typography.bodySmall,
-    color: colors.onSurfaceVariant,
-  },
-  footerLink: {
-    ...typography.bodySmall,
-    color: colors.primary,
+  navLabel: {
+    ...typography.titleSmall,
+    color: colors.onSurface,
+    flex: 1,
   },
 });

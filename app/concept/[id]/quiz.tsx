@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { View, Text, ScrollView, StyleSheet, Platform } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { concepts } from "../../../src/data/concepts";
@@ -8,6 +8,7 @@ import PrimaryButton from "../../../src/components/PrimaryButton";
 import { addLearningRecord, addWrongAnswer } from "../../../src/lib/db";
 import { colors, typography, spacing, radius, shadows } from "../../../src/theme/tokens";
 
+const isWeb = Platform.OS === "web";
 type QuizState = "answering" | "answered" | "finished";
 
 export default function QuizScreen() {
@@ -39,7 +40,7 @@ export default function QuizScreen() {
 
     if (index === question.answerIndex) {
       setScore((s) => s + 1);
-    } else {
+    } else if (!isWeb) {
       addWrongAnswer(
         concept.id,
         question.id,
@@ -57,7 +58,9 @@ export default function QuizScreen() {
       setSelectedIndex(null);
       setState("answering");
     } else {
-      addLearningRecord(concept.id, score, concept.questions.length);
+      if (!isWeb) {
+        addLearningRecord(concept.id, score, concept.questions.length);
+      }
       setShowResult(true);
       setState("finished");
     }
@@ -173,6 +176,9 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.lg,
     paddingBottom: spacing.xxxl,
+    maxWidth: 600,
+    alignSelf: "center",
+    width: "100%",
   },
   center: {
     flex: 1,
@@ -268,6 +274,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: spacing.xxxl,
+    maxWidth: 500,
+    alignSelf: "center",
+    width: "100%",
   },
   scoreCircle: {
     width: 120,
@@ -308,5 +317,5 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xxl,
     textAlign: "center",
   },
-  resultActions: { width: "100%", gap: spacing.sm },
+  resultActions: { width: "100%", gap: spacing.sm, maxWidth: 300 },
 });
