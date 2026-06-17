@@ -1,48 +1,36 @@
-import * as SQLite from "expo-sqlite";
 import { LearningRecord, Favorite, WrongAnswer } from "../types/concept";
 
-let db: SQLite.SQLiteDatabase;
-let initialized = false;
+// Web implementation using localStorage
 
-function getDb(): SQLite.SQLiteDatabase {
-  if (!db) {
-    db = SQLite.openDatabaseSync("fable.db");
+const STORAGE_KEYS = {
+  LEARNING_RECORDS: "fable_learning_records",
+  FAVORITES: "fable_favorites",
+  WRONG_ANSWERS: "fable_wrong_answers",
+};
+
+function getStorageData<T>(key: string): T[] {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
   }
-  return db;
+}
+
+function setStorageData<T>(key: string, data: T[]): void {
+  localStorage.setItem(key, JSON.stringify(data));
 }
 
 export function initDatabase(): void {
-  if (initialized) return;
-  const database = getDb();
-  database.execSync(`
-    CREATE TABLE IF NOT EXISTS learning_records (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      concept_id TEXT NOT NULL,
-      completed_at TEXT NOT NULL,
-      score INTEGER NOT NULL,
-      total_questions INTEGER NOT NULL
-    );
-  `);
-  database.execSync(`
-    CREATE TABLE IF NOT EXISTS favorites (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      concept_id TEXT NOT NULL UNIQUE,
-      created_at TEXT NOT NULL
-    );
-  `);
-  database.execSync(`
-    CREATE TABLE IF NOT EXISTS wrong_answers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      concept_id TEXT NOT NULL,
-      question_id TEXT NOT NULL,
-      question TEXT NOT NULL,
-      user_answer TEXT NOT NULL,
-      correct_answer TEXT NOT NULL,
-      explanation TEXT NOT NULL,
-      created_at TEXT NOT NULL
-    );
-  `);
-  initialized = true;
+  if (!localStorage.getItem(STORAGE_KEYS.LEARNING_RECORDS)) {
+    localStorage.setItem(STORAGE_KEYS.LEARNING_RECORDS, "[]");
+  }
+  if (!localStorage.getItem(STORAGE_KEYS.FAVORITES)) {
+    localStorage.setItem(STORAGE_KEYS.FAVORITES, "[]");
+  }
+  if (!localStorage.getItem(STORAGE_KEYS.WRONG_ANSWERS)) {
+    localStorage.setItem(STORAGE_KEYS.WRONG_ANSWERS, "[]");
+  }
 }
 
 export function addLearningRecord(
@@ -50,52 +38,46 @@ export function addLearningRecord(
   score: number,
   totalQuestions: number
 ): void {
-  const database = getDb();
-  database.runSync(
-    "INSERT INTO learning_records (concept_id, completed_at, score, total_questions) VALUES (?, ?, ?, ?)",
-    [conceptId, new Date().toISOString(), score, totalQuestions]
-  );
+  const records = getStorageData<LearningRecord>(STORAGE_KEYS.LEARNING_RECORDS);
+  records.unshift({
+    id: Date.now(),
+    concept_id: conceptId,
+    completed_at: new Date().toISOString(),
+    score,
+    total_questions: totalQuestions,
+  });
+  setStorageData(STORAGE_KEYS.LEARNING_RECORDS, records);
 }
 
 export function getLearningRecords(): LearningRecord[] {
-  const database = getDb();
-  return database.getAllSync<LearningRecord>(
-    "SELECT * FROM learning_records ORDER BY completed_at DESC"
-  );
+  return getStorageData<LearningRecord>(STORAGE_KEYS.LEARNING_RECORDS);
 }
 
 export function toggleFavorite(conceptId: string): boolean {
-  const database = getDb();
-  const existing = database.getFirstSync<{ id: number }>(
-    "SELECT id FROM favorites WHERE concept_id = ?",
-    [conceptId]
-  );
-  if (existing) {
-    database.runSync("DELETE FROM favorites WHERE concept_id = ?", [conceptId]);
+  const favorites = getStorageData<Favorite>(STORAGE_KEYS.FAVORITES);
+  const index = favorites.findIndex((f) => f.concept_id === conceptId);
+  if (index >= 0) {
+    favorites.splice(index, 1);
+    setStorageData(STORAGE_KEYS.FAVORITES, favorites);
     return false;
   } else {
-    database.runSync(
-      "INSERT INTO favorites (concept_id, created_at) VALUES (?, ?)",
-      [conceptId, new Date().toISOString()]
-    );
+    favorites.unshift({
+      id: Date.now(),
+      concept_id: conceptId,
+      created_at: new Date().toISOString(),
+    });
+    setStorageData(STORAGE_KEYS.FAVORITES, favorites);
     return true;
   }
 }
 
 export function getFavorites(): Favorite[] {
-  const database = getDb();
-  return database.getAllSync<Favorite>(
-    "SELECT * FROM favorites ORDER BY created_at DESC"
-  );
+  return getStorageData<Favorite>(STORAGE_KEYS.FAVORITES);
 }
 
 export function isFavorite(conceptId: string): boolean {
-  const database = getDb();
-  const row = database.getFirstSync<{ id: number }>(
-    "SELECT id FROM favorites WHERE concept_id = ?",
-    [conceptId]
-  );
-  return !!row;
+  const favorites = getStorageData<Favorite>(STORAGE_KEYS.FAVORITES);
+  return favorites.some((f) => f.concept_id === conceptId);
 }
 
 export function addWrongAnswer(
@@ -106,16 +88,20 @@ export function addWrongAnswer(
   correctAnswer: string,
   explanation: string
 ): void {
-  const database = getDb();
-  database.runSync(
-    "INSERT INTO wrong_answers (concept_id, question_id, question, user_answer, correct_answer, explanation, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-    [conceptId, questionId, question, userAnswer, correctAnswer, explanation, new Date().toISOString()]
-  );
+  const wrongAnswers = getStorageData<WrongAnswer>(STORAGE_KEYS.WRONG_ANSWERS);
+  wrongAnswers.unshift({
+    id: Date.now(),
+    concept_id: conceptId,
+    question_id: questionId,
+    question,
+    user_answer: userAnswer,
+    correct_answer: correctAnswer,
+    explanation,
+    created_at: new Date().toISOString(),
+  });
+  setStorageData(STORAGE_KEYS.WRONG_ANSWERS, wrongAnswers);
 }
 
 export function getWrongAnswers(): WrongAnswer[] {
-  const database = getDb();
-  return database.getAllSync<WrongAnswer>(
-    "SELECT * FROM wrong_answers ORDER BY created_at DESC"
-  );
+  return getStorageData<WrongAnswer>(STORAGE_KEYS.WRONG_ANSWERS);
 }
