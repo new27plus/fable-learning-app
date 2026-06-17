@@ -15,6 +15,8 @@ npx expo start --android
 npx expo start --ios
 npx tsc --noEmit     # Type-check without building
 npm run lint         # Expo lint
+npm run validate     # Validate concept data integrity
+npm run stats        # Show concept distribution statistics
 ```
 
 ## Architecture
@@ -24,7 +26,7 @@ npm run lint         # Expo lint
 **Routing:** File-based via Expo Router (`app/` directory). Root layout in `app/_layout.tsx` initializes the SQLite database on mount via `useEffect`. All routes use `Stack` navigator. Dynamic segments use `[id]`/`[field]` brackets.
 
 **Data flow:**
-- Content is a static TypeScript array in `src/data/concepts.ts` — not JSON. This is the single source of truth for all learning content (12 concepts, 2 per field).
+- Content is stored as JSON files in `src/data/concepts/` (one file per field). `src/data/concepts.ts` imports and re-exports all concepts as a single array. This is the single source of truth for all learning content.
 - User data (learning records, favorites, wrong answers) lives in SQLite via `src/lib/db.ts`.
 - Pages read content from the concepts array and user state from SQLite. There is no global state management — each page fetches its own data on mount or via `useFocusEffect`.
 - The database uses synchronous APIs (`openDatabaseSync`, `runSync`, `getAllSync`, `getFirstSync`, `execSync`).
@@ -39,12 +41,17 @@ npm run lint         # Expo lint
 
 ## Adding New Concepts
 
-Add entries to the `concepts` array in `src/data/concepts.ts`. Each concept must have:
+Add entries to the appropriate JSON file in `src/data/concepts/` (e.g., `economics.json` for 经济学). Use `_template.json` as a reference for the required structure.
+
+Each concept must have:
 - A unique `id` (kebab-case, used as route param)
 - `field` must be one of the 6 values in `src/types/concept.ts` `Field` type
 - `level` must be one of `"小白" | "大学生" | "研究生"`
-- Exactly 3 questions with `answerIndex` (0-3)
-- `fable` as a template literal (backticks) for multi-line content
+- Exactly 4 metaphorMap items, 3 boundaries, 2 examples (positive + negative), 3 questions
+- Question IDs must follow pattern `{concept-id}-q{1-3}`
+- Use Chinese quotation marks `""` (U+201C/U+201D), not ASCII `"`
+
+**Validation:** Run `npm run validate` to check data integrity after adding concepts.
 
 If adding a new field, update the `Field` type in `src/types/concept.ts` and the `FIELDS`/`FIELD_ICONS`/`FIELD_COLORS` maps in `src/utils/concept.ts`.
 
