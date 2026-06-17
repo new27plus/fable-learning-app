@@ -33,6 +33,13 @@
       "versionCode": 1
     },
     "platforms": ["ios", "android", "web"],
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "experiments": {
+      "baseUrl": "/fable-learning-app"
+    },
     "plugins": [
       "expo-router",
       "expo-sqlite",
