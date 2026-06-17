@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { View, Text, FlatList, StyleSheet, Platform } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { concepts } from "../../src/data/concepts";
 import ConceptCard from "../../src/components/ConceptCard";
 import { initDatabase, getLearningRecords, getFavorites } from "../../src/lib/db";
 import { getFieldColor, getFieldIcon } from "../../src/utils/concept";
-import { colors, typography, spacing, radius } from "../../src/theme/tokens";
+import { colors, typography, spacing, radius, shadows } from "../../src/theme/tokens";
+
+const isWeb = Platform.OS === "web";
 
 export default function FieldList() {
   const { field } = useLocalSearchParams<{ field: string }>();
@@ -18,22 +21,26 @@ export default function FieldList() {
   const fieldIcon = getFieldIcon(field || "");
 
   useEffect(() => {
-    initDatabase();
-    const records = getLearningRecords();
-    setLearnedIds(new Set(records.map((r) => r.concept_id)));
-    const favs = getFavorites();
-    setFavoriteIds(new Set(favs.map((f) => f.concept_id)));
+    if (!isWeb) {
+      initDatabase();
+      const records = getLearningRecords();
+      setLearnedIds(new Set(records.map((r) => r.concept_id)));
+      const favs = getFavorites();
+      setFavoriteIds(new Set(favs.map((f) => f.concept_id)));
+    }
   }, []);
 
   return (
     <View style={styles.screen}>
       <View style={[styles.header, { backgroundColor: fieldColor + "0D" }]}>
-        <View style={[styles.iconBg, { backgroundColor: fieldColor + "18" }]}>
-          <Text style={styles.icon}>{fieldIcon}</Text>
-        </View>
-        <View style={styles.headerInfo}>
-          <Text style={[styles.fieldName, { color: fieldColor }]}>{field}</Text>
-          <Text style={styles.count}>{fieldConcepts.length} 个概念</Text>
+        <View style={styles.headerContent}>
+          <View style={[styles.iconBg, { backgroundColor: fieldColor + "18" }]}>
+            <Text style={styles.icon}>{fieldIcon}</Text>
+          </View>
+          <View style={styles.headerInfo}>
+            <Text style={[styles.fieldName, { color: fieldColor }]}>{field}</Text>
+            <Text style={styles.count}>{fieldConcepts.length} 个概念</Text>
+          </View>
         </View>
       </View>
       <FlatList
@@ -43,8 +50,8 @@ export default function FieldList() {
         renderItem={({ item }) => (
           <ConceptCard
             concept={item}
-            isLearned={learnedIds.has(item.id)}
-            isFavorite={favoriteIds.has(item.id)}
+            isLearned={isWeb ? false : learnedIds.has(item.id)}
+            isFavorite={isWeb ? false : favoriteIds.has(item.id)}
             onPress={() => router.push(`/concept/${item.id}/story`)}
           />
         )}
@@ -59,31 +66,39 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   header: {
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.lg,
+  },
+  headerContent: {
     flexDirection: "row",
     alignItems: "center",
-    padding: spacing.lg,
-    paddingBottom: spacing.base,
+    maxWidth: 800,
+    alignSelf: "center",
+    width: "100%",
   },
   iconBg: {
-    width: 52,
-    height: 52,
-    borderRadius: radius.full,
+    width: 60,
+    height: 60,
+    borderRadius: radius.lg,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: spacing.md,
+    marginRight: spacing.lg,
   },
-  icon: { fontSize: 26 },
+  icon: { fontSize: 30 },
   headerInfo: { flex: 1 },
   fieldName: {
-    ...typography.headline,
+    fontSize: isWeb ? 28 : 22,
+    fontWeight: "700",
   },
   count: {
-    ...typography.bodySmall,
+    ...typography.body,
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: spacing.xs,
   },
   list: {
     padding: spacing.lg,
-    paddingTop: spacing.sm,
+    maxWidth: 800,
+    alignSelf: "center",
+    width: "100%",
   },
 });

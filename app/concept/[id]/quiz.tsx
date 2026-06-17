@@ -87,7 +87,7 @@ export default function QuizScreen() {
             <Text style={styles.scoreSlash}>/</Text>
             <Text style={styles.scoreTotal}>{concept.questions.length}</Text>
           </View>
-          <Ionicons name={getResultIcon()} size={48} color={colors.primary} style={styles.resultIcon} />
+          <Ionicons name={getResultIcon()} size={56} color={colors.primary} style={styles.resultIcon} />
           <Text style={styles.resultTitle}>测验完成！</Text>
           <Text style={styles.resultDesc}>{getResultText()}</Text>
           <View style={styles.resultActions}>
@@ -100,70 +100,83 @@ export default function QuizScreen() {
   }
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      {/* Progress */}
-      <View style={styles.progressWrapper}>
-        <View style={styles.progressBar}>
-          <View
-            style={[
-              styles.progressFill,
-              { width: `${((currentIndex + 1) / concept.questions.length) * 100}%` },
-            ]}
-          />
-        </View>
-        <Text style={styles.progressText}>
-          {currentIndex + 1} / {concept.questions.length}
-        </Text>
-      </View>
-
-      {/* Question card */}
-      <View style={styles.questionCard}>
-        <Text style={styles.questionText}>{question.question}</Text>
-      </View>
-
-      {/* Options */}
-      <View style={styles.options}>
-        {question.options.map((opt, i) => (
-          <QuizOption
-            key={i}
-            label={opt}
-            index={i}
-            selected={selectedIndex === i}
-            correct={
-              state === "answered"
-                ? i === question.answerIndex
-                  ? true
-                  : selectedIndex === i
-                  ? false
-                  : null
-                : null
-            }
-            disabled={state !== "answering"}
-            onPress={() => handleSelect(i)}
-          />
-        ))}
-      </View>
-
-      {/* Feedback */}
-      {state === "answered" && (
-        <View style={[styles.feedbackCard, isCorrect ? styles.feedbackCorrect : styles.feedbackWrong]}>
-          <View style={styles.feedbackHeader}>
-            <Ionicons
-              name={isCorrect ? "checkmark-circle" : "close-circle"}
-              size={20}
-              color={isCorrect ? colors.success : colors.error}
-            />
-            <Text style={isCorrect ? styles.correctTitle : styles.wrongTitle}>
-              {isCorrect ? "回答正确！" : "回答错误"}
-            </Text>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.scrollContent}>
+      <View style={styles.container}>
+        {/* Breadcrumb */}
+        {isWeb && (
+          <View style={styles.breadcrumb}>
+            <Text style={styles.breadcrumbLink} onPress={() => router.push("/")}>首页</Text>
+            <Ionicons name="chevron-forward" size={14} color={colors.onSurfaceVariant} />
+            <Text style={styles.breadcrumbCurrent}>测验</Text>
           </View>
-          <Text style={styles.explanation}>{question.explanation}</Text>
-          <PrimaryButton
-            title={currentIndex < concept.questions.length - 1 ? "下一题" : "查看结果"}
-            onPress={handleNext}
-          />
+        )}
+
+        {/* Progress */}
+        <View style={styles.progressWrapper}>
+          <View style={styles.progressBar}>
+            <View
+              style={[
+                styles.progressFill,
+                { width: `${((currentIndex + 1) / concept.questions.length) * 100}%` },
+              ]}
+            />
+          </View>
+          <Text style={styles.progressText}>
+            {currentIndex + 1} / {concept.questions.length}
+          </Text>
         </View>
-      )}
+
+        {/* Question card */}
+        <View style={styles.questionCard}>
+          <Text style={styles.questionNumber}>问题 {currentIndex + 1}</Text>
+          <Text style={styles.questionText}>{question.question}</Text>
+        </View>
+
+        {/* Options */}
+        <View style={styles.options}>
+          {question.options.map((opt, i) => (
+            <QuizOption
+              key={i}
+              label={opt}
+              index={i}
+              selected={selectedIndex === i}
+              correct={
+                state === "answered"
+                  ? i === question.answerIndex
+                    ? true
+                    : selectedIndex === i
+                    ? false
+                    : null
+                  : null
+              }
+              disabled={state !== "answering"}
+              onPress={() => handleSelect(i)}
+            />
+          ))}
+        </View>
+
+        {/* Feedback */}
+        {state === "answered" && (
+          <View style={[styles.feedbackCard, isCorrect ? styles.feedbackCorrect : styles.feedbackWrong]}>
+            <View style={styles.feedbackHeader}>
+              <Ionicons
+                name={isCorrect ? "checkmark-circle" : "close-circle"}
+                size={24}
+                color={isCorrect ? colors.success : colors.error}
+              />
+              <Text style={isCorrect ? styles.correctTitle : styles.wrongTitle}>
+                {isCorrect ? "回答正确！" : "回答错误"}
+              </Text>
+            </View>
+            <Text style={styles.explanation}>{question.explanation}</Text>
+            <PrimaryButton
+              title={currentIndex < concept.questions.length - 1 ? "下一题" : "查看结果"}
+              onPress={handleNext}
+              icon="arrow-forward"
+            />
+          </View>
+        )}
+      </View>
     </ScrollView>
   );
 }
@@ -173,12 +186,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.surface,
   },
-  content: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xxxl,
-    maxWidth: 600,
+  scrollContent: {
+    flexGrow: 1,
+  },
+  container: {
+    maxWidth: 700,
     alignSelf: "center",
     width: "100%",
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xl,
   },
   center: {
     flex: 1,
@@ -187,51 +203,77 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
 
+  // Breadcrumb
+  breadcrumb: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    marginBottom: spacing.xl,
+  },
+  breadcrumbLink: {
+    ...typography.bodySmall,
+    color: colors.primary,
+  },
+  breadcrumbCurrent: {
+    ...typography.bodySmall,
+    color: colors.onSurfaceVariant,
+  },
+
   // Progress
   progressWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xl,
   },
   progressBar: {
     flex: 1,
-    height: 6,
+    height: 8,
     backgroundColor: colors.surfaceContainerHigh,
     borderRadius: radius.full,
-    marginRight: spacing.sm + 2,
+    marginRight: spacing.md,
     overflow: "hidden",
   },
   progressFill: {
-    height: 6,
+    height: 8,
     backgroundColor: colors.primary,
     borderRadius: radius.full,
   },
   progressText: {
-    ...typography.labelMedium,
+    ...typography.labelLarge,
     color: colors.onSurfaceVariant,
-    minWidth: 40,
+    minWidth: 50,
   },
 
   // Question
   questionCard: {
     backgroundColor: colors.surfaceBright,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    marginBottom: spacing.lg,
+    borderRadius: radius.xl,
+    padding: isWeb ? spacing.xl * 1.5 : spacing.lg,
+    marginBottom: spacing.xl,
     ...shadows.md,
   },
+  questionNumber: {
+    ...typography.labelMedium,
+    color: colors.primary,
+    marginBottom: spacing.md,
+  },
   questionText: {
-    ...typography.titleLarge,
+    fontSize: isWeb ? 24 : 20,
+    fontWeight: "600",
     color: colors.onSurface,
+    lineHeight: isWeb ? 36 : 28,
   },
 
-  options: { marginBottom: spacing.base },
+  options: {
+    marginBottom: spacing.lg,
+    gap: spacing.md,
+  },
 
   // Feedback
   feedbackCard: {
-    borderRadius: radius.lg,
-    padding: spacing.base + 2,
-    marginTop: spacing.xs,
+    borderRadius: radius.xl,
+    padding: isWeb ? spacing.xl : spacing.base + 2,
+    marginTop: spacing.md,
     ...shadows.md,
   },
   feedbackCorrect: {
@@ -247,75 +289,81 @@ const styles = StyleSheet.create({
   feedbackHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.sm,
-    marginBottom: spacing.sm + 2,
+    gap: spacing.md,
+    marginBottom: spacing.lg,
   },
   correctTitle: {
-    ...typography.titleMedium,
+    ...typography.titleLarge,
     color: colors.success,
   },
   wrongTitle: {
-    ...typography.titleMedium,
+    ...typography.titleLarge,
     color: colors.error,
   },
   explanation: {
-    ...typography.body,
+    ...typography.bodyLarge,
     color: colors.onSurfaceVariant,
-    marginBottom: spacing.base,
+    marginBottom: spacing.xl,
+    lineHeight: 28,
   },
 
   // Result
   resultScreen: {
     flex: 1,
     backgroundColor: colors.surface,
+    justifyContent: "center",
+    alignItems: "center",
   },
   resultCard: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: spacing.xxxl,
     maxWidth: 500,
-    alignSelf: "center",
     width: "100%",
   },
   scoreCircle: {
-    width: 120,
-    height: 120,
+    width: 140,
+    height: 140,
     borderRadius: radius.full,
     backgroundColor: colors.surfaceBright,
     justifyContent: "center",
     ...shadows.lg,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xl,
     flexDirection: "row",
     alignItems: "baseline",
   },
   scoreNumber: {
-    fontSize: 44,
+    fontSize: 52,
     fontWeight: "800",
     color: colors.primary,
   },
   scoreSlash: {
-    fontSize: 22,
+    fontSize: 26,
     color: colors.onSurfaceVariant,
-    marginHorizontal: 2,
+    marginHorizontal: 3,
   },
   scoreTotal: {
-    fontSize: 22,
+    fontSize: 26,
     color: colors.onSurfaceVariant,
   },
   resultIcon: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   resultTitle: {
-    ...typography.headline,
+    fontSize: isWeb ? 32 : 22,
+    fontWeight: "700",
     color: colors.onSurface,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
   },
   resultDesc: {
-    ...typography.body,
+    ...typography.bodyLarge,
     color: colors.onSurfaceVariant,
-    marginBottom: spacing.xxl,
+    marginBottom: spacing.xxxl,
     textAlign: "center",
   },
-  resultActions: { width: "100%", gap: spacing.sm, maxWidth: 300 },
+  resultActions: {
+    width: "100%",
+    gap: spacing.md,
+    maxWidth: 300,
+  },
 });
